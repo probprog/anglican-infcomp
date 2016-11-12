@@ -1,3 +1,1 @@
-# Introduction to anglican-csis
-
-TODO: write [great documentation](http://jacobian.org/writing/what-to-write/)
+# Clojure library for compiled inference in Anglican
