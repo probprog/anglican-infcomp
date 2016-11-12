@@ -8,8 +8,8 @@
             [msgpack clojure-extensions]
             [anglican.runtime :refer [sample* observe*]]
             [anglican.inference :refer [checkpoint infer exec]]
-            [anglican.state :refer [add-log-weight]])
-  (:use [anglican-csis.utils :only [get-proposal-dist-const get-proposal-object]]))
+            [anglican.state :refer [add-log-weight]]
+            [anglican-csis.proposal :refer [get-proposal]]))
 
 (derive ::algorithm :anglican.inference/algorithm)
 
@@ -31,8 +31,8 @@
         socket (::socket state)
 
         ;; Prepare message
-        proposal-dist-object (get-proposal-object (:dist smp))
-        proposal-str (:proposal-str proposal-dist-object)
+        proposal (get-proposal (:dist smp))
+        proposal-name (:proposal-name proposal)
         prev-sample-value (:value (last samples) 0)
         prev-sample-address (:sample-address (last samples) 0)
         prev-sample-instance (:sample-instance (last samples) 0)
@@ -42,10 +42,10 @@
                                                        "prev-sample-value" prev-sample-value
                                                        "prev-sample-address" prev-sample-address
                                                        "prev-sample-instance" prev-sample-instance
-                                                       "proposal-type" proposal-str}}))
-        proposal-extra-params (:proposal-extra-params proposal-dist-object)
+                                                       "proposal-name" proposal-name}}))
+        proposal-extra-params (:proposal-extra-params proposal)
         proposal-params-from-torch (msg/unpack (zmq/receive socket))
-        proposal-params (case proposal-str
+        proposal-params (case proposal-name
                           "categorical" (list (mapv vector (second proposal-extra-params))
                                               (take (first proposal-extra-params)
                                                     proposal-params-from-torch))
@@ -68,18 +68,9 @@
                                       pre-cov (vec (map vec (second proposal-params-from-torch)))
                                       cov (m/add pre-cov (m/transpose pre-cov) (m/mmul dim (m/identity-matrix dim)))]
                                   [mean cov])
-                          "mvndiag1proposal" (let [mean (vec (first proposal-params-from-torch))
-                                                   var (second proposal-params-from-torch)]
-                                               [mean var])
-                          "mvndiag2proposal" (let [mean (vec (first proposal-params-from-torch))
-                                                   vars (vec (second proposal-params-from-torch))]
-                                               [mean vars])
-                          "mvndiag3proposal" (let [mean (vec (first proposal-params-from-torch))
-                                                   var (second proposal-params-from-torch)]
-                                               [mean var])
                           "normal" proposal-params-from-torch
                           :unimplemented)
-        proposal-dist (apply (:proposal-dist-const proposal-dist-object) proposal-params)
+        proposal-dist (apply (:proposal-constructor proposal) proposal-params)
         value (sample* proposal-dist)
         log-q (observe* proposal-dist value)
         log-p (observe* (:dist smp) value)
@@ -89,7 +80,7 @@
                                  (array-map :sample-address sample-address
                                             :sample-instance sample-instance
                                             :value value
-                                            :params proposal-params))
+                                            :proposal-params proposal-params))
 
         ;; Modify weights
         weight-update (- log-p log-q)

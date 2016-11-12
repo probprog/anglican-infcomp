@@ -5,7 +5,7 @@
             [clojure.core.matrix :as m]
             [anglican.inference :refer [checkpoint exec]]
             [anglican.runtime :refer [sample*]]
-            [anglican-csis.utils :refer [get-proposal-object]]))
+            [anglican-csis.proposal :refer [get-proposal]]))
 
 (derive ::algorithm :anglican.inference/algorithm)
 
@@ -30,7 +30,7 @@
         sample-address (:id smp)
         sample-instance (inc (count (filter #(= sample-address (:sample-address %))
                                             (:samples state))))
-        proposal-object (get-proposal-object (:dist smp))
+        proposal (get-proposal (:dist smp))
         time-index (inc (count (:samples state)))
         value (sample* (:dist smp))
         updated-state (update-in state
@@ -39,9 +39,9 @@
                                  (array-map :time-index time-index
                                             :sample-address sample-address
                                             :sample-instance sample-instance
-                                            :prior-dist-str (:prior-dist-str proposal-object)
-                                            :proposal-str (:proposal-str proposal-object)
-                                            :proposal-extra-params (:proposal-extra-params proposal-object)
+                                            :prior-dist-str (:prior-name proposal)
+                                            :proposal-str (:proposal-name proposal)
+                                            :proposal-extra-params (:proposal-extra-params proposal)
                                             :value value))]
     #((:cont smp) value updated-state)))
 
