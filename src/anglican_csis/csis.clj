@@ -9,7 +9,7 @@
             [anglican.runtime :refer [sample* observe*]]
             [anglican.inference :refer [checkpoint infer exec]]
             [anglican.state :refer [add-log-weight]])
-  (:use [utils :only [get-proposal-dist-const get-proposal-object]]))
+  (:use [anglican-csis.utils :only [get-proposal-dist-const get-proposal-object]]))
 
 (derive ::algorithm :anglican.inference/algorithm)
 

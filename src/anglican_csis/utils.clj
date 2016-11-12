@@ -2,7 +2,7 @@
   "Various functions used for CSIS"
   (:require [clojure.string :as str]
             [clojure.core.matrix :as m]
-            [dists :refer :all]
+            [anglican-csis.dists :refer :all]
             [anglican.rmh-dists :refer :all]
             [anglican.runtime :refer :all]))
 

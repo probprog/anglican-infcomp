@@ -2,7 +2,7 @@
   "Networking tools between Clojure and Torch."
   (:require [zeromq.zmq :as zmq]
             [msgpack.core :as msg]
-            [prior :refer [sample-from-prior]]
+            [anglican-csis.prior :refer [sample-from-prior]]
             [clojure.walk :refer [stringify-keys]]))
 
 (defn start-torch-connection [query query-args combine-observes-fn tcp-endpoint]

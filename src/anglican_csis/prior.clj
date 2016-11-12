@@ -5,7 +5,7 @@
             [clojure.core.matrix :as m]
             [anglican.inference :refer [checkpoint exec]]
             [anglican.runtime :refer [sample*]]
-            [utils :refer [get-proposal-object]]))
+            [anglican-csis.utils :refer [get-proposal-object]]))
 
 (derive ::algorithm :anglican.inference/algorithm)
 
