@@ -40,7 +40,7 @@
                                             :sample-address sample-address
                                             :sample-instance sample-instance
                                             :prior-dist-str (:prior-name proposal)
-                                            :proposal-str (:proposal-name proposal)
+                                            :proposal-name (:proposal-name proposal)
                                             :proposal-extra-params (:proposal-extra-params proposal)
                                             :value value))]
     #((:cont smp) value updated-state)))
