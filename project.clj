@@ -7,4 +7,5 @@
                  [anglican "1.0.0"]
                  [org.zeromq/jeromq "0.3.3"]
                  [org.zeromq/cljzmq "0.1.4" :exclusions [org.zeromq/jzmq]]
-                 [clojure-msgpack "1.2.0"]])
+                 [clojure-msgpack "1.2.0"]]
+  :plugins [[lein-codox "0.10.1"]])

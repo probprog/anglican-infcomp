@@ -1,13 +1,14 @@
-(ns anglican-csis.proposal
+(ns anglican.csis.proposal
   "Various functions used for CSIS"
   (:require [clojure.string :as str]
             [clojure.core.matrix :as m]
-            [anglican-csis.dists :refer :all]
+            [anglican.csis.dists :refer :all]
             [anglican.rmh-dists :refer :all]
             [anglican.runtime :refer :all]))
 
-(defn- dist-to-str [dist]
+(defn- dist-to-str
   "Takes distribution object and returns its distribution name (string)."
+  [dist]
   (-> dist
       type
       str
@@ -19,8 +20,9 @@
       butlast
       str/join))
 
-(defn- get-proposal-constructor [prior-dist]
+(defn- get-proposal-constructor
   "Takes prior distribution and returns proposal distribution constructor."
+  [prior-dist]
   (condp = (type prior-dist)
     anglican.runtime.beta-distribution continuous-min-max
     anglican.runtime.categorical-distribution categorical
@@ -35,8 +37,9 @@
     anglican.runtime.uniform-continuous-distribution continuous-min-max
     :no-dist))
 
-(defn- get-proposal-name [prior-dist]
+(defn- get-proposal-name
   "Takes prior distribution and returns proposal distribution name."
+  [prior-dist]
   (condp = (type prior-dist)
     anglican.runtime.beta-distribution "continuousminmax"
     anglican.runtime.categorical-distribution "categorical"
@@ -51,14 +54,23 @@
     anglican.runtime.uniform-continuous-distribution "continuousminmax"
     :no-dist))
 
-(defn get-proposal [prior-dist]
+(defn get-proposal
   "Takes prior distribution. Returns a map which has metadata about the
-  proposal distribution:
+  proposal distribution.
 
-    - prior-name: name of the prior distribution.
-    - proposal-name: name of the proposal distribution.
-    - proposal-constructor: constructor of the proposal distribution.
-    - proposal-extra-params: extra parameters for the proposal distribution."
+  Input
+
+  prior-dist: prior distribution object.
+
+  Output
+
+  A map with the following keys:
+
+  prior-name: name of the prior distribution.
+  proposal-name: name of the proposal distribution.
+  proposal-constructor: constructor of the proposal distribution.
+  proposal-extra-params: extra parameters for the proposal distribution."
+  [prior-dist]
   (let [prior-name (dist-to-str prior-dist)
         proposal-name (get-proposal-name prior-dist)
         proposal-constructor (get-proposal-constructor prior-dist)

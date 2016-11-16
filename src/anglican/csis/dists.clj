@@ -1,4 +1,4 @@
-(ns anglican-csis.dists
+(ns anglican.csis.dists
   "Proposal distributions used in Compiled Sequential Inportance Sampling (csis)"
   (:require [anglican.runtime :refer [observe* sample* defdist discrete beta log mvn]]
             [clojure.core.matrix :as m]))
@@ -7,8 +7,7 @@
 
 (defdist beta2
   "Beta distribution parameterized by mode and certainty. Taken from
-  http://doingbayesiandataanalysis.blogspot.co.uk/2012/06/beta-distribution
-  -parameterized-by-mode.html"
+  http://doingbayesiandataanalysis.blogspot.co.uk/2012/06/beta-distribution-parameterized-by-mode.html"
   [mode certainty]
   [_ (assert (and (>= mode 0) (<= mode 1) (>= certainty 2))
              (str "Invalid beta2 parameters: mode = " mode " certainty = " certainty
@@ -41,27 +40,3 @@
   (sample* [this] (+ min (* (- max min) (sample* dist))))
   (observe* [this value] (- (observe* dist (/ (- value min) (- max min)))
                             (log (- max min)))))
-
-(defdist mvn-diag1-proposal
-  "Multivariate normal distribution, with the same variance across all
-  dimensions and zero covariance between different dimensions"
-  [mean var]
-  [dist (mvn mean (m/mmul var (m/identity-matrix (count mean))))]
-  (sample* [this] (sample* dist))
-  (observe* [this value] (observe* dist value)))
-
-(defdist mvn-diag2-proposal
-  "Multivariate normal distribution, with zero covariance between different
-  dimensions"
-  [mean vars]
-  [dist (mvn mean (m/diagonal-matrix vars))]
-  (sample* [this] (sample* dist))
-  (observe* [this value] (observe* dist value)))
-
-(defdist mvn-diag3-proposal
-  "Multivariate normal distribution, with the same variance across all
-  dimensions and zero covariance between different dimensions"
-  [mean var]
-  [dist (mvn-diag1-proposal mean var)]
-  (sample* [this] (sample* dist))
-  (observe* [this value] (observe* dist value)))

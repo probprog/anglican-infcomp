@@ -1,4 +1,4 @@
-(ns anglican-csis.csis
+(ns anglican.csis.csis
   "Compiled Sequential Importance Sampling"
   (:refer-clojure :exclude [rand rand-int rand-nth])
   (:require [clojure.string :as str]
@@ -9,14 +9,14 @@
             [anglican.runtime :refer [sample* observe*]]
             [anglican.inference :refer [checkpoint infer exec]]
             [anglican.state :refer [add-log-weight]]
-            [anglican-csis.proposal :refer [get-proposal]]))
+            [anglican.csis.proposal :refer [get-proposal]]))
 
 (derive ::algorithm :anglican.inference/algorithm)
 
 (def initial-state
   "initial state for Compiled SIS (CUDA)"
   (into anglican.state/initial-state
-        {::proposal-params-tcp nil
+        {::tcp-endpoint nil
          ::context nil
          ::socket nil
          ::samples []}))
@@ -88,7 +88,7 @@
     #((:cont smp) value updated-state)))
 
 ;; From http://stackoverflow.com/questions/14488150/how-to-write-a-dissoc-in-command-for-clojure
-(defn dissoc-in
+(defn- dissoc-in
   "Dissociates an entry from a nested associative structure returning a new
   nested structure. keys is a sequence of keys. Any empty maps that result
   will not be present in the new structure."
@@ -108,19 +108,19 @@
   (-> res
       (dissoc-in [:state ::context])
       (dissoc-in [:state ::socket])
-      (dissoc-in [:state ::proposal-params-tcp])
+      (dissoc-in [:state ::tcp-endpoint])
       #_(dissoc-in [:state ::samples])))
 
-(defmethod infer :csis [_ prog value & {:keys [proposal-params-tcp observe-embedder-input]
-                                                :or {proposal-params-tcp nil
-                                                     observe-embedder-input nil}}]
+(defmethod infer :csis [_ prog value & {:keys [tcp-endpoint observe-embedder-input]
+                                        :or {tcp-endpoint "tcp://localhost:6666"
+                                             observe-embedder-input nil}}]
   (letfn [(sample-seq []
                       (lazy-seq
                        (cons
                         (:state (exec ::algorithm prog value (into initial-state
                                                                    (let [context (zmq/context 1)
                                                                          socket (doto (zmq/socket context :req)
-                                                                                  (zmq/connect proposal-params-tcp))
+                                                                                  (zmq/connect tcp-endpoint))
                                                                          msg-pack-obs (if (nil? observe-embedder-input)
                                                                                         {"shape" (m/shape (first value)) "data" (flatten (first value))}
                                                                                         observe-embedder-input)]
@@ -129,6 +129,6 @@
                                                                      (zmq/receive socket)
                                                                      {::context context
                                                                       ::socket socket
-                                                                      ::proposal-params-tcp proposal-params-tcp}))))
+                                                                      ::tcp-endpoint tcp-endpoint}))))
                         (sample-seq))))]
     (sample-seq)))
