@@ -1,4 +1,4 @@
-# Clojure library for compiled inference in Anglican
+# Clojure library for Compiled Inference in Anglican
 
 See [the main repo](https://github.com/tuananhle7/torch-csis) for detailed instructions.
 
