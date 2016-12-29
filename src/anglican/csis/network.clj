@@ -1,6 +1,7 @@
 (ns anglican.csis.network
   "Networking tools between Clojure and Torch."
   (:require [zeromq.zmq :as zmq]
+            [clojure.core.matrix :refer [shape]]
             [msgpack.core :as msg]
             [anglican.csis.prior :refer [sample-from-prior]]
             [clojure.walk :refer [stringify-keys]]))
@@ -20,9 +21,8 @@
 
   combine-observes-fn: A one input function which takes in an observes object
     obtained from sampling random variables in query defined via the observe
-    statements and returns a map of the form
-
-      {\"shape\" <shape> \"data\" <data>}
+    statements and returns an N-D numeric array of values to be fed to Torch
+    to use as input the observe embedder.
 
     which is suitable for the Torch side to use as input to the observe
     embedder. <shape> is vector of integers representing the dimensions of the
@@ -31,9 +31,7 @@
     Example:
 
       (defn combine-observes-fn [observes]
-        (let [data (:value (first observes))
-              dim (count data)]
-          {\"shape\" [dim] \"data\" data}))
+        (:value (first observes)))
 
     To see what an observes object looks like, run sample-observes-from-prior
     with query and query-args to get one sample.
@@ -62,8 +60,11 @@
                                     command (get msg "command")
                                     command-param (get msg "command-param")]
                                 (cond (= command "new-batch") (let [prior-samples (map (fn [smp]
-                                                                                         (update smp :observes
-                                                                                                 combine-observes-fn))
+                                                                                         (update smp
+                                                                                                 :observes
+                                                                                                 #(let [data (combine-observes-fn %)
+                                                                                                        dim (shape data)]
+                                                                                                    {"shape" dim "data" (flatten data)})))
                                                                                        (take command-param (sample-from-prior query query-args)))]
                                                                 (zmq/send socket (msg/pack (stringify-keys prior-samples))))
                                       :else (zmq/send-str socket "invalid command"))))
