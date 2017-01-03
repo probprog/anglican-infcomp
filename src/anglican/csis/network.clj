@@ -20,20 +20,16 @@
   query-args: Arguments to query.
 
   combine-observes-fn: A one input function which takes in an observes object
-    obtained from sampling random variables in query defined via the observe
+    obtained from sampling random variables in query defined via the `observe`
     statements and returns an N-D numeric array of values to be fed to Torch
     to use as input the observe embedder.
-
-    which is suitable for the Torch side to use as input to the observe
-    embedder. <shape> is vector of integers representing the dimensions of the
-    input to the observe embedder. <data> is a flattened vector of numbers.
 
     Example:
 
       (defn combine-observes-fn [observes]
         (:value (first observes)))
 
-    To see what an observes object looks like, run sample-observes-from-prior
+    To see what an observes object looks like, run `sample-observes-from-prior`
     with query and query-args to get one sample.
 
   (Optional) tcp-endpoint: String. Default value is \"tcp://*:5555\". TCP value
@@ -43,6 +39,19 @@
 
       th compile.lua --server localhost:<port-number> <other-options>...
 
+  combine-samples-fn: A one input function which takes in a list of samples
+    obtained from sampling random variables in query defined via the `sample`
+    statements and returns a modified list of samples in order to be fed to the
+    Torch decoder LSTM. Default: `identity`.
+
+    Example (increments each sample by one):
+
+      (defn combine-samples-fn [samples]
+        (map #(update % :value inc) samples))
+
+    To see what a list of samples looks like, run `sample-samples-from-prior`
+    with query and query-args to get one sample.
+
   Outputs
 
   A map, carrying information about this connection and ways to stop it. The
@@ -50,8 +59,9 @@
   compilation, call stop-torch-connection on the variable. Bad things can
   happen if this is not done."
   [query query-args combine-observes-fn &
-                              {:keys [tcp-endpoint]
-                               :or {tcp-endpoint "tcp://*:5555"}}]
+                              {:keys [tcp-endpoint combine-samples-fn]
+                               :or {tcp-endpoint "tcp://*:5555"
+                                    compile-samples-fn identity}}]
   (let [context (zmq/context 1)
         socket (doto (zmq/socket context :rep)
                  (zmq/bind tcp-endpoint))
@@ -59,12 +69,20 @@
                               (let [msg (msg/unpack (zmq/receive socket))
                                     command (get msg "command")
                                     command-param (get msg "command-param")]
-                                (cond (= command "new-batch") (let [prior-samples (map (fn [smp]
-                                                                                         (update smp
-                                                                                                 :observes
-                                                                                                 #(let [data (combine-observes-fn %)
-                                                                                                        dim (shape data)]
-                                                                                                    {"shape" dim "data" (flatten data)})))
+                                (cond (= command "new-batch") (let [prior-samples (map (comp
+                                                                                        ;; Update observes via the combine-observes-fn
+                                                                                        (fn [smp]
+                                                                                          (update smp
+                                                                                                  :observes
+                                                                                                  #(let [data (combine-observes-fn %)
+                                                                                                         dim (shape data)]
+                                                                                                     {"shape" dim "data" (flatten data)})))
+
+                                                                                        ;; Update samples via the combine-samples-fn
+                                                                                        (fn [smp]
+                                                                                          (update smp
+                                                                                                  :samples
+                                                                                                  combine-samples-fn)))
                                                                                        (take command-param (sample-from-prior query query-args)))]
                                                                 (zmq/send socket (msg/pack (stringify-keys prior-samples))))
                                       :else (zmq/send-str socket "invalid command"))))
@@ -89,3 +107,9 @@
   statements in query given the query arguments query-args."
   [query query-args]
   (:observes (first (sample-from-prior query query-args))))
+
+(defn sample-samples-from-prior
+  "Returns a sample from the random variables defined via the sample
+  statements in query given the query arguments query-args."
+  [query query-args]
+  (:samples (first (sample-from-prior query query-args))))
