@@ -30,7 +30,7 @@
     anglican.runtime.discrete-distribution discrete-min-max
     anglican.runtime.flip-distribution flip
     anglican.runtime.gamma-distribution folded-normal
-    anglican.runtime.mvn-distribution mvn
+    anglican.runtime.mvn-distribution mvn-mean-var
     anglican.runtime.normal-distribution normal
     anglican.runtime.poisson-distribution folded-normal-discrete
     anglican.runtime.uniform-discrete-distribution discrete-min-max
@@ -47,7 +47,7 @@
     anglican.runtime.discrete-distribution "discreteminmax"
     anglican.runtime.flip-distribution "flip"
     anglican.runtime.gamma-distribution "foldednormal"
-    anglican.runtime.mvn-distribution "mvn"
+    anglican.runtime.mvn-distribution "mvnmeanvar"
     anglican.runtime.normal-distribution "normal"
     anglican.runtime.poisson-distribution "foldednormaldiscrete"
     anglican.runtime.uniform-discrete-distribution "discreteminmax"

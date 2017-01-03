@@ -68,6 +68,12 @@
                                       pre-cov (vec (map vec (second proposal-params-from-torch)))
                                       cov (m/add pre-cov (m/transpose pre-cov) (m/mmul dim (m/identity-matrix dim)))]
                                   [mean cov])
+                          "mvnmeanvars" (let [mean (vec (first proposal-params-from-torch))
+                                              vars (vec (second proposal-params-from-torch))]
+                                          [mean vars])
+                          "mvnmeanvar" (let [mean (vec (first proposal-params-from-torch))
+                                             var (second proposal-params-from-torch)]
+                                         [mean var])
                           "normal" proposal-params-from-torch
                           :unimplemented)
         proposal-dist (apply (:proposal-constructor proposal) proposal-params)

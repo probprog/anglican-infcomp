@@ -40,3 +40,19 @@
   (sample* [this] (+ min (* (- max min) (sample* dist))))
   (observe* [this value] (- (observe* dist (/ (- value min) (- max min)))
                             (log (- max min)))))
+
+(defdist mvn-mean-var
+  "Multivariate normal distribution, with the same variance across all
+  dimensions and zero covariance between different dimensions"
+  [mean var]
+  [dist (mvn mean (m/mmul var (m/identity-matrix (count mean))))]
+  (sample* [this] (sample* dist))
+  (observe* [this value] (observe* dist value)))
+
+(defdist mvn-mean-vars
+  "Multivariate normal distribution, with zero covariance between different
+  dimensions"
+  [mean vars]
+  [dist (mvn mean (m/diagonal-matrix vars))]
+  (sample* [this] (sample* dist))
+  (observe* [this value] (observe* dist value)))
