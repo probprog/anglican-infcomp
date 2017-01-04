@@ -61,7 +61,7 @@
   [query query-args combine-observes-fn &
                               {:keys [tcp-endpoint combine-samples-fn]
                                :or {tcp-endpoint "tcp://*:5555"
-                                    compile-samples-fn identity}}]
+                                    combine-samples-fn identity}}]
   (let [context (zmq/context 1)
         socket (doto (zmq/socket context :rep)
                  (zmq/bind tcp-endpoint))
