@@ -118,8 +118,7 @@
       #_(dissoc-in [:state ::samples])))
 
 (defmethod infer :csis [_ prog value & {:keys [tcp-endpoint observe-embedder-input]
-                                        :or {tcp-endpoint "tcp://localhost:6666"
-                                             observe-embedder-input nil}}]
+                                        :or {tcp-endpoint "tcp://localhost:6666"}}]
   (letfn [(sample-seq []
                       (lazy-seq
                        (cons
@@ -127,9 +126,9 @@
                                                                    (let [context (zmq/context 1)
                                                                          socket (doto (zmq/socket context :req)
                                                                                   (zmq/connect tcp-endpoint))
-                                                                         msg-pack-obs (if (nil? observe-embedder-input)
-                                                                                        {"shape" (m/shape (first value)) "data" (flatten (first value))}
-                                                                                        observe-embedder-input)]
+                                                                         observe-embedder-input (or observe-embedder-input (first value))
+                                                                         msg-pack-obs {"shape" (m/shape observe-embedder-input)
+                                                                                       "data" (flatten observe-embedder-input)}]
                                                                      (zmq/send socket (msg/pack {"command" "observe-init"
                                                                                                  "command-param" msg-pack-obs}))
                                                                      (zmq/receive socket)
