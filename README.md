@@ -6,7 +6,7 @@ This repository contains the [Clojure](https://clojure.org/)-based probabilistic
 
 For a walkthrough on how to set up a system to compile inference for a probabilistic program written in Anglican, check out the [tutorial][tutorial-link]. Also check out the [examples][examples-link] folder in the [torch-csis][torch-csis-repo-link] repo.
 
-Clone this repo `lein install` to install. Documentation is [here][anglican-csis-docs-link].
+Clone this repo and run `lein install` to install. Documentation is [here][anglican-csis-docs-link].
 
 If you use this code in your work, please cite our [paper][paper-link]:
 ```
