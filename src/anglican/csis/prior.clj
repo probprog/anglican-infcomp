@@ -16,8 +16,8 @@
   Stores samples in state."
   (let [state (:state obs)
         observe-address (:id obs)
-        number (inc (count (filter #(= observe-address (:observe-address %))
-                                   (:observes state))))
+        observe-instance (inc (count (filter #(= observe-address (:observe-address %))
+                                             (:observes state))))
         time-index (inc (count (:observes state)))
         value (sample* (:dist obs))
         updated-state (update-in state
@@ -25,7 +25,7 @@
                                  conj
                                  (array-map :time-index time-index
                                             :observe-address observe-address
-                                            :number number
+                                            :observe-instance observe-instance
                                             :value value))]
     #((:cont obs) value updated-state)))
 
