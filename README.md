@@ -18,7 +18,7 @@ If you use this code in your work, please cite our [paper][paper-link]:
 }
 ```
 
-[project-page-link]: https://github.com/tuananhle7/torch-csis/blob/master/PROJECT_PAGE.md
+[project-page-link]: http://tuananhle.co.uk/compiled-inference
 [examples-link]: https://github.com/tuananhle7/torch-csis/tree/master/examples
 [torch-csis-repo-link]: https://github.com/tuananhle7/torch-csis
 [tutorial-link]: https://github.com/tuananhle7/torch-csis/blob/master/TUTORIAL.md
