@@ -46,7 +46,6 @@
                                  (array-map :time-index time-index
                                             :sample-address sample-address
                                             :sample-instance sample-instance
-                                            :prior-dist-str (:prior-name proposal)
                                             :proposal-name (:proposal-name proposal)
                                             :proposal-extra-params (:proposal-extra-params proposal)
                                             :value value))]
@@ -66,7 +65,7 @@
   (letfn [(sample-seq []
                       (lazy-seq
                        (let [state (:state (exec ::algorithm query query-args {:samples [] :observes []}))
-                             state-without-predicts (dissoc state :predicts)]
-                         (cons state-without-predicts
+                             state-without-predicts-and-result (dissoc state :predicts :result)]
+                         (cons state-without-predicts-and-result
                                (sample-seq)))))]
     (sample-seq)))
