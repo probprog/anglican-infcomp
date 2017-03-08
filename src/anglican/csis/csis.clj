@@ -34,7 +34,7 @@
         proposal (get-proposal (:dist smp))
         proposal-name (:proposal-name proposal)
         prev-sample-value (:value (last samples) 0)
-        prev-sample-address (:sample-address (last samples) 0)
+        prev-sample-address (:sample-address (last samples) "")
         prev-sample-instance (:sample-instance (last samples) 0)
         _ (zmq/send socket (msg/pack {"command" "proposal-params"
                                       "command-param" {"sample-address" sample-address
