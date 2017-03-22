@@ -1,5 +1,5 @@
 (defproject anglican-csis "0.1.0-SNAPSHOT"
-  :description "Compiled Inference Library for Anglican"
+  :description "Inference Compilation Library for Anglican"
   :url "https://arxiv.org/abs/1610.09900"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
