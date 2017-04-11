@@ -3,8 +3,22 @@
   (:require [zeromq.zmq :as zmq]
             [clojure.core.matrix :refer [shape]]
             [msgpack.core :as msg]
+            [anglican.infcomp.flatbuffers.protocols :as fbs]
             [anglican.infcomp.prior :refer [sample-from-prior]]
-            [clojure.walk :refer [stringify-keys]]))
+            [clojure.walk :refer [stringify-keys]]
+            anglican.infcomp.flatbuffers.traces-from-prior-reply
+            anglican.infcomp.flatbuffers.trace
+            anglican.infcomp.flatbuffers.ndarray
+            anglican.infcomp.flatbuffers.sample
+            anglican.infcomp.flatbuffers.normal-proposal
+            anglican.infcomp.flatbuffers.uniform-discrete-proposal)
+  (:import [anglican.infcomp.flatbuffers.traces_from_prior_reply TracesFromPriorReplyClj]
+           [anglican.infcomp.flatbuffers.trace TraceClj]
+           [anglican.infcomp.flatbuffers.ndarray NDArrayClj]
+           [anglican.infcomp.flatbuffers.sample SampleClj]
+           [anglican.infcomp.flatbuffers.normal_proposal NormalProposalClj]
+           [anglican.infcomp.flatbuffers.uniform_discrete_proposal UniformDiscreteProposalClj]
+           [infcomp Request]))
 
 (defn start-torch-connection
   "Starts a ZeroMQ connection with Torch in order to compile the probabilistic
@@ -66,26 +80,54 @@
         socket (doto (zmq/socket context :rep)
                  (zmq/bind tcp-endpoint))
         server (future (try (while (not (.. Thread currentThread isInterrupted))
-                              (let [msg (msg/unpack (zmq/receive socket))
-                                    command (get msg "command")
-                                    command-param (get msg "command-param")]
-                                (cond (= command "new-batch") (let [prior-samples (map (comp
-                                                                                        ;; Update observes via the combine-observes-fn
-                                                                                        (fn [smp]
-                                                                                          (update smp
-                                                                                                  :observes
-                                                                                                  #(let [data (combine-observes-fn %)
-                                                                                                         dim (shape data)]
-                                                                                                     {"shape" dim "data" (flatten data)})))
+                              (let [request (fbs/unpack (zmq/receive socket))]
+                                (cond (= (fbs/union-type request) Request/TracesFromPriorRequest)
+                                      (let [prior-samples (stringify-keys
+                                                           (map (comp
+                                                                 ;; Update observes via the combine-observes-fn
+                                                                 (fn [smp]
+                                                                   (update smp
+                                                                           :observes
+                                                                           #(let [data (combine-observes-fn %)
+                                                                                  dim (shape data)]
+                                                                              {"shape" dim "data" (flatten data)})))
 
-                                                                                        ;; Update samples via the combine-samples-fn
-                                                                                        (fn [smp]
-                                                                                          (update smp
-                                                                                                  :samples
-                                                                                                  combine-samples-fn)))
-                                                                                       (take command-param (sample-from-prior query query-args)))]
-                                                                (zmq/send socket (msg/pack (stringify-keys prior-samples))))
-                                      :else (zmq/send-str socket "invalid command"))))
+                                                                 ;; Update samples via the combine-samples-fn
+                                                                 (fn [smp]
+                                                                   (update smp
+                                                                           :samples
+                                                                           combine-samples-fn)))
+                                                                (take (.num-traces request)
+                                                                      (sample-from-prior query query-args))))
+                                            traces-from-prior-reply (TracesFromPriorReplyClj.
+                                                                     (map (fn [trace]
+                                                                            (TraceClj.
+                                                                             (NDArrayClj.
+                                                                              (get-in trace ["observes" "data"])
+                                                                              (get-in trace ["observes" "shape"]))
+
+                                                                             (map (fn [sample]
+                                                                                    (SampleClj.
+                                                                                     (:time-index sample)
+                                                                                     (:sample-address sample)
+                                                                                     (:sample-instance sample)
+                                                                                     (cond
+                                                                                      (= (:proposal-name sample) "normal")
+                                                                                      (NormalProposalClj. nil nil)
+
+                                                                                      (= (:proposal-name sample) "discreteminmax")
+                                                                                      (UniformDiscreteProposalClj.
+                                                                                       (first (:proposal-extra-params sample))
+                                                                                       (second (:proposal-extra-params sample))
+                                                                                       nil))
+                                                                                     (let [value (:value sample)]
+                                                                                       (if (number? value)
+                                                                                         [value] value))))
+                                                                                  (get trace "samples"))))
+                                                                          prior-samples))]
+                                        (zmq/send socket (fbs/pack traces-from-prior-reply)))
+
+                                      :else (throw (Exception. (str "bad request: " request))))))
                          (catch org.zeromq.ZMQException e
                            (str "Torch connection terminated."))
                          (catch Exception e

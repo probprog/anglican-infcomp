@@ -1,5 +1,7 @@
 (ns anglican.infcomp.flatbuffers.proposal-distributions
-  (:require [anglican.infcomp.flatbuffers.protocols :as p])
+  (:require [anglican.infcomp.flatbuffers.protocols :as p]
+            anglican.infcomp.flatbuffers.normal-proposal
+            anglican.infcomp.flatbuffers.uniform-discrete-proposal)
   (:import [anglican.infcomp.flatbuffers.normal_proposal NormalProposalClj]
            [anglican.infcomp.flatbuffers.uniform_discrete_proposal UniformDiscreteProposalClj]
            [infcomp ProposalDistribution NormalProposal UniformDiscreteProposal]

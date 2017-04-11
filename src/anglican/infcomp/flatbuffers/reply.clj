@@ -1,5 +1,8 @@
 (ns anglican.infcomp.flatbuffers.reply
-  (:require [anglican.infcomp.flatbuffers.protocols :as p])
+  (:require [anglican.infcomp.flatbuffers.protocols :as p]
+            anglican.infcomp.flatbuffers.traces-from-prior-reply
+            anglican.infcomp.flatbuffers.observes-init-reply
+            anglican.infcomp.flatbuffers.proposal-reply)
   (:import [anglican.infcomp.flatbuffers.traces_from_prior_reply TracesFromPriorReplyClj]
            [anglican.infcomp.flatbuffers.observes_init_reply ObservesInitReplyClj]
            [anglican.infcomp.flatbuffers.proposal_reply ProposalReplyClj]
