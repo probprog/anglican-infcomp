@@ -1,11 +1,11 @@
-(ns anglican.csis.prior
+(ns anglican.infcomp.prior
   "Non-standard interpretation for sampling from the prior."
   (:refer-clojure :exclude [rand rand-int rand-nth])
   (:require [clojure.string :as str]
             [clojure.core.matrix :as m]
             [anglican.inference :refer [checkpoint exec]]
             [anglican.runtime :refer [sample*]]
-            [anglican.csis.proposal :refer [get-proposal]]))
+            [anglican.infcomp.proposal :refer [get-proposal]]))
 
 (derive ::algorithm :anglican.inference/algorithm)
 

@@ -1,4 +1,4 @@
-(ns anglican.csis.csis
+(ns anglican.infcomp.csis
   "Compiled Sequential Importance Sampling"
   (:refer-clojure :exclude [rand rand-int rand-nth])
   (:require [clojure.string :as str]
@@ -9,7 +9,7 @@
             [anglican.runtime :refer [sample* observe*]]
             [anglican.inference :refer [checkpoint infer exec]]
             [anglican.state :refer [add-log-weight]]
-            [anglican.csis.proposal :refer [get-proposal]]))
+            [anglican.infcomp.proposal :refer [get-proposal]]))
 
 (derive ::algorithm :anglican.inference/algorithm)
 

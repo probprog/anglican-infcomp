@@ -1,5 +1,5 @@
-(ns anglican.csis.dists
-  "Proposal distributions used in Compiled Sequential Inportance Sampling (csis)"
+(ns anglican.infcomp.dists
+  "Proposal distributions used in Inference Compilation"
   (:require [anglican.runtime :refer [observe* sample* defdist discrete beta log mvn]]
             [clojure.core.matrix :as m]))
 

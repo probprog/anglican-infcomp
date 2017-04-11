@@ -1,9 +1,9 @@
-(ns anglican.csis.network
+(ns anglican.infcomp.network
   "Networking tools between Clojure and Torch."
   (:require [zeromq.zmq :as zmq]
             [clojure.core.matrix :refer [shape]]
             [msgpack.core :as msg]
-            [anglican.csis.prior :refer [sample-from-prior]]
+            [anglican.infcomp.prior :refer [sample-from-prior]]
             [clojure.walk :refer [stringify-keys]]))
 
 (defn start-torch-connection

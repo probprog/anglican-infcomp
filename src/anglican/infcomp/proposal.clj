@@ -1,8 +1,8 @@
-(ns anglican.csis.proposal
-  "Various functions used for CSIS"
+(ns anglican.infcomp.proposal
+  "Various functions used for Inference Compilation"
   (:require [clojure.string :as str]
             [clojure.core.matrix :as m]
-            [anglican.csis.dists :refer :all]
+            [anglican.infcomp.dists :refer :all]
             [anglican.rmh-dists :refer :all]
             [anglican.runtime :refer :all]))
 
