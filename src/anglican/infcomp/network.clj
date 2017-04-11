@@ -18,7 +18,7 @@
            [anglican.infcomp.flatbuffers.sample SampleClj]
            [anglican.infcomp.flatbuffers.normal_proposal NormalProposalClj]
            [anglican.infcomp.flatbuffers.uniform_discrete_proposal UniformDiscreteProposalClj]
-           [infcomp Request]))
+           [infcomp.protocol Request]))
 
 (defn start-torch-connection
   "Starts a ZeroMQ connection with Torch in order to compile the probabilistic
@@ -120,9 +120,12 @@
                                                                                        (first (:proposal-extra-params sample))
                                                                                        (second (:proposal-extra-params sample))
                                                                                        nil))
-                                                                                     (let [value (:value sample)]
-                                                                                       (if (number? value)
-                                                                                         [value] value))))
+                                                                                     (let [value (:value sample)
+                                                                                           value (if (number? value)
+                                                                                                   [value] value)
+                                                                                           data (flatten value)
+                                                                                           shape (shape data)]
+                                                                                       (NDArrayClj. data shape))))
                                                                                   (get trace "samples"))))
                                                                           prior-samples))]
                                         (zmq/send socket (fbs/pack traces-from-prior-reply)))

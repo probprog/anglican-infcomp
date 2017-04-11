@@ -1,6 +1,6 @@
 (ns anglican.infcomp.flatbuffers.observes-init-request
   (:require [anglican.infcomp.flatbuffers.protocols :as p])
-  (:import [infcomp ObservesInitRequest]
+  (:import [infcomp.protocol ObservesInitRequest]
            [java.nio ByteBuffer]))
 
 (deftype ObservesInitRequestClj [observes]

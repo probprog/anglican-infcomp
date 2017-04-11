@@ -1,6 +1,6 @@
 (ns anglican.infcomp.flatbuffers.sample
   (:require [anglican.infcomp.flatbuffers.protocols :as p])
-  (:import [infcomp Sample ProposalDistribution NormalProposal UniformDiscreteProposal]
+  (:import [infcomp.protocol Sample ProposalDistribution NormalProposal UniformDiscreteProposal]
            [java.nio ByteBuffer]))
 
 (deftype SampleClj [time address instance proposal value]

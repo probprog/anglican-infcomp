@@ -1,6 +1,6 @@
 (ns anglican.infcomp.flatbuffers.normal-proposal
   (:require [anglican.infcomp.flatbuffers.protocols :as p])
-  (:import [infcomp NormalProposal]
+  (:import [infcomp.protocol NormalProposal]
            [java.nio ByteBuffer]))
 
 (deftype NormalProposalClj [mean std]

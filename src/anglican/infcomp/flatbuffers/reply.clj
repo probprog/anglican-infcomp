@@ -6,7 +6,7 @@
   (:import [anglican.infcomp.flatbuffers.traces_from_prior_reply TracesFromPriorReplyClj]
            [anglican.infcomp.flatbuffers.observes_init_reply ObservesInitReplyClj]
            [anglican.infcomp.flatbuffers.proposal_reply ProposalReplyClj]
-           [infcomp Reply TracesFromPriorReply ObservesInitReply ProposalReply]
+           [infcomp.protocol Reply TracesFromPriorReply ObservesInitReply ProposalReply]
            [java.nio ByteBuffer]))
 
 (extend-protocol p/PUnionType

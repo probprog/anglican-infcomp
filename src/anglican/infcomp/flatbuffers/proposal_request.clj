@@ -1,6 +1,6 @@
 (ns anglican.infcomp.flatbuffers.proposal-request
   (:require [anglican.infcomp.flatbuffers.protocols :as p])
-  (:import [infcomp ProposalRequest]
+  (:import [infcomp.protocol ProposalRequest]
            [java.nio ByteBuffer]))
 
 (deftype ProposalRequestClj [current-sample previous-sample]

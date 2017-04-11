@@ -1,6 +1,6 @@
 (ns anglican.infcomp.flatbuffers.trace
   (:require [anglican.infcomp.flatbuffers.protocols :as p])
-  (:import [infcomp Trace]
+  (:import [infcomp.protocol Trace]
            [java.nio ByteBuffer]))
 
 (deftype TraceClj [observes samples]

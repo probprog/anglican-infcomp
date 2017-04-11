@@ -1,7 +1,7 @@
 (ns anglican.infcomp.flatbuffers.ndarray
   (:require [anglican.infcomp.flatbuffers.java-interop :refer [byte-buffer-to-double-vec byte-buffer-to-int-vec]]
             [anglican.infcomp.flatbuffers.protocols :as p])
-  (:import [infcomp NDArray]
+  (:import [infcomp.protocol NDArray]
            [java.nio ByteBuffer]))
 
 (deftype NDArrayClj [data shape]

@@ -4,7 +4,7 @@
             anglican.infcomp.flatbuffers.uniform-discrete-proposal)
   (:import [anglican.infcomp.flatbuffers.normal_proposal NormalProposalClj]
            [anglican.infcomp.flatbuffers.uniform_discrete_proposal UniformDiscreteProposalClj]
-           [infcomp ProposalDistribution NormalProposal UniformDiscreteProposal]
+           [infcomp.protocol ProposalDistribution NormalProposal UniformDiscreteProposal]
            [java.nio ByteBuffer]))
 
 (extend-protocol p/PUnionType

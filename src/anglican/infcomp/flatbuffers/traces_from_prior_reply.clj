@@ -1,6 +1,6 @@
 (ns anglican.infcomp.flatbuffers.traces-from-prior-reply
   (:require [anglican.infcomp.flatbuffers.protocols :as p])
-  (:import [infcomp TracesFromPriorReply]
+  (:import [infcomp.protocol TracesFromPriorReply]
            [java.nio ByteBuffer]))
 
 (deftype TracesFromPriorReplyClj [traces]

@@ -1,6 +1,6 @@
 (ns anglican.infcomp.flatbuffers.uniform-discrete-proposal
   (:require [anglican.infcomp.flatbuffers.protocols :as p])
-  (:import [infcomp UniformDiscreteProposal]
+  (:import [infcomp.protocol UniformDiscreteProposal]
            [java.nio ByteBuffer]))
 
 (deftype UniformDiscreteProposalClj [min max probabilities]

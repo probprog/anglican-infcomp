@@ -1,6 +1,6 @@
 (ns anglican.infcomp.flatbuffers.proposal-reply
   (:require [anglican.infcomp.flatbuffers.protocols :as p])
-  (:import [infcomp ProposalReply ProposalDistribution NormalProposal UniformDiscreteProposal]
+  (:import [infcomp.protocol ProposalReply ProposalDistribution NormalProposal UniformDiscreteProposal]
            [java.nio ByteBuffer]))
 
 (deftype ProposalReplyClj [proposal]
