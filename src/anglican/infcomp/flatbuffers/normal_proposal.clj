@@ -1,6 +1,6 @@
 (ns anglican.infcomp.flatbuffers.normal-proposal
   (:require [anglican.infcomp.flatbuffers.protocols :as p])
-  (:import [infcomp.protocol NormalProposal]
+  (:import [infcomp.flatbuffers ProposalDistribution NormalProposal]
            [java.nio ByteBuffer]))
 
 (deftype NormalProposalClj [mean std]
@@ -11,15 +11,13 @@
                                    (NormalProposal/addMean builder mean))
                                  (if std
                                    (NormalProposal/addStd builder std))
-                                 (NormalProposal/endNormalProposal builder))))
+                                 (NormalProposal/endNormalProposal builder)))
 
-(extend-protocol p/PUnpack
-  (Class/forName "[B")
-  (unpack [this] (let [buf (ByteBuffer/wrap this)
-                       normal-proposal (NormalProposal/getRootAsNormalProposal buf)]
-                   (p/unpack normal-proposal)))
+  p/PProposalDistributionType
+  (proposal-distribution-type [this] ProposalDistribution/NormalProposal))
 
-  NormalProposal
+(extend-type NormalProposal
+  p/PUnpack
   (unpack [this] (let [mean (.mean this)
                        std (.std this)]
                    (NormalProposalClj. mean std))))

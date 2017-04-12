@@ -4,18 +4,28 @@
 (defprotocol PDeepEquals
   (deep-equals [this other]))
 
+;; Unions
+(defprotocol PProposalDistributionType
+  (proposal-distribution-type [this]))
+
+(defprotocol PMessageBodyType
+  (message-body-type [this]))
+
+;; Pack
 (defprotocol PPack
   (pack [this]))
 
 (defprotocol PPackBuilder
   (pack-builder [this builder]))
 
+;; Unpack
 (defprotocol PUnpack
   (unpack [this]))
 
-(defprotocol PUnionType
-  (union-type [this]))
+(defprotocol PUnpackMessage
+  (unpack-message [this]))
 
+;; Defaults
 (extend-type java.lang.Object
   PPack
   (pack [this] (let [builder (FlatBufferBuilder.)
@@ -31,4 +41,7 @@
   (pack-builder [this builder] nil)
 
   PUnpack
-  (unpack [this] nil))
+  (unpack [this] nil)
+
+  PUnpackMessage
+  (unpack-message [this]))

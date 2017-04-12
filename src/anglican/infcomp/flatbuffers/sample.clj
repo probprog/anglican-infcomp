@@ -1,6 +1,6 @@
 (ns anglican.infcomp.flatbuffers.sample
   (:require [anglican.infcomp.flatbuffers.protocols :as p])
-  (:import [infcomp.protocol Sample ProposalDistribution NormalProposal UniformDiscreteProposal]
+  (:import [infcomp.flatbuffers Sample ProposalDistribution NormalProposal UniformDiscreteProposal]
            [java.nio ByteBuffer]))
 
 (deftype SampleClj [time address instance proposal value]
@@ -19,20 +19,15 @@
                                  (if instance
                                    (Sample/addInstance builder instance))
                                  (if proposal
-                                   (Sample/addProposalType builder (p/union-type proposal)))
+                                   (Sample/addProposalType builder (p/proposal-distribution-type proposal)))
                                  (if proposal
                                    (Sample/addProposal builder packed-proposal))
                                  (if value
                                    (Sample/addValue builder packed-value))
                                  (Sample/endSample builder))))
 
-(extend-protocol p/PUnpack
-  (Class/forName "[B")
-  (unpack [this] (let [buf (ByteBuffer/wrap this)
-                       sample (Sample/getRootAsSample buf)]
-                   (p/unpack sample)))
-
-  Sample
+(extend-type Sample
+  p/PUnpack
   (unpack [this] (let [time (.time this)
                        address (.address this)
                        instance (.instance this)

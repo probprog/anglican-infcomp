@@ -4,12 +4,28 @@
   (:require [clojure.string :as str]
             [clojure.core.matrix :as m]
             [zeromq.zmq :as zmq]
-            [msgpack.core :as msg]
+            [anglican.infcomp.flatbuffers.protocols :as fbs]
             [msgpack clojure-extensions]
             [anglican.runtime :refer [sample* observe*]]
             [anglican.inference :refer [checkpoint infer exec]]
             [anglican.state :refer [add-log-weight]]
-            [anglican.infcomp.proposal :refer [get-proposal]]))
+            [anglican.infcomp.proposal :refer [get-proposal]]
+            anglican.infcomp.flatbuffers.observes-init-request
+            anglican.infcomp.flatbuffers.ndarray
+            anglican.infcomp.flatbuffers.proposal-request
+            anglican.infcomp.flatbuffers.sample
+            anglican.infcomp.flatbuffers.normal-proposal
+            anglican.infcomp.flatbuffers.uniform-discrete-proposal
+            anglican.infcomp.flatbuffers.message
+            anglican.infcomp.flatbuffers.proposal-reply)
+  (:import [anglican.infcomp.flatbuffers.observes_init_request ObservesInitRequestClj]
+           [anglican.infcomp.flatbuffers.ndarray NDArrayClj]
+           [anglican.infcomp.flatbuffers.proposal_request ProposalRequestClj]
+           [anglican.infcomp.flatbuffers.sample SampleClj]
+           [anglican.infcomp.flatbuffers.normal_proposal NormalProposalClj]
+           [anglican.infcomp.flatbuffers.uniform_discrete_proposal UniformDiscreteProposalClj]
+           [anglican.infcomp.flatbuffers.message MessageClj]
+           [anglican.infcomp.flatbuffers.proposal_reply ProposalReplyClj]))
 
 (derive ::algorithm :anglican.inference/algorithm)
 
@@ -36,15 +52,32 @@
         prev-sample-value (:value (last samples) 0)
         prev-sample-address (:sample-address (last samples) "")
         prev-sample-instance (:sample-instance (last samples) 0)
-        _ (zmq/send socket (msg/pack {"command" "proposal-params"
-                                      "command-param" {"sample-address" sample-address
-                                                       "sample-instance" sample-instance
-                                                       "prev-sample-value" prev-sample-value
-                                                       "prev-sample-address" prev-sample-address
-                                                       "prev-sample-instance" prev-sample-instance
-                                                       "proposal-name" proposal-name}}))
+        _ (zmq/send socket (fbs/pack (MesssageClj.
+                                      (ProposalRequestClj.
+                                       (SampleClj. nil
+                                                   sample-address
+                                                   sample-instance
+                                                   (cond
+                                                    (= proposal-name "normal")
+                                                    (NormalProposalClj. nil nil)
+
+                                                    (= proposal-name "discreteminmax")
+                                                    (UniformDiscreteProposalClj. nil nil nil))
+                                                   nil)
+                                       (SampleClj. nil
+                                                   prev-sample-address
+                                                   prev-sample-instance
+                                                   nil
+                                                   (let [value prev-sample-value
+                                                         value (if (number? value)
+                                                                 [value] value)
+                                                         data (flatten value)
+                                                         shape (m/shape data)]
+                                                     (NDArrayClj. data shape))))))
         proposal-extra-params (:proposal-extra-params proposal)
-        proposal-params-from-torch (msg/unpack (zmq/receive socket))
+        proposal-params-from-torch (let [message-body (.body (fbs/unpack (zmq/receive socket)))]
+                                     (assert (instance? ProposalReplyClj message-body))
+                                     (.proposal message-body))
         proposal-params (case proposal-name
                           "categorical" (list (mapv vector (second proposal-extra-params))
                                               (take (first proposal-extra-params)
@@ -58,8 +91,8 @@
                           "dirichlet" (take (first proposal-extra-params)
                                             proposal-params-from-torch)
                           "discreteminmax" [(first proposal-extra-params)
-                                            (take (- (second proposal-extra-params) (first proposal-extra-params))
-                                                  proposal-params-from-torch)]
+                                            (m/reshape (.data (.probabilities proposal-params-from-torch))
+                                                       (.shape (.probabilities proposal-params-from-torch)))]
                           "flip" proposal-params-from-torch
                           "foldednormal" proposal-params-from-torch
                           "foldednormaldiscrete" proposal-params-from-torch
@@ -74,7 +107,7 @@
                           "mvnmeanvar" (let [mean (vec (first proposal-params-from-torch))
                                              var (second proposal-params-from-torch)]
                                          [mean var])
-                          "normal" proposal-params-from-torch
+                          "normal" [(.mean proposal-params-from-torch) (.std proposal-params-from-torch)]
                           :unimplemented)
         proposal-dist (apply (:proposal-constructor proposal) proposal-params)
         value (sample* proposal-dist)
@@ -126,11 +159,11 @@
                                                                    (let [context (zmq/context 1)
                                                                          socket (doto (zmq/socket context :req)
                                                                                   (zmq/connect tcp-endpoint))
-                                                                         observe-embedder-input (or observe-embedder-input (first value))
-                                                                         msg-pack-obs {"shape" (m/shape observe-embedder-input)
-                                                                                       "data" (flatten observe-embedder-input)}]
-                                                                     (zmq/send socket (msg/pack {"command" "observe-init"
-                                                                                                 "command-param" msg-pack-obs}))
+                                                                         observe-embedder-input (or observe-embedder-input (first value))]
+                                                                     (zmq/send socket (fbs/pack (ObservesInitRequestClj.
+                                                                                                 (NDArrayClj.
+                                                                                                  (flatten observe-embedder-input)
+                                                                                                  (m/shape observe-embedder-input)))))
                                                                      (zmq/receive socket)
                                                                      {::context context
                                                                       ::socket socket

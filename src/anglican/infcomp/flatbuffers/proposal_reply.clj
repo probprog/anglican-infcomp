@@ -1,6 +1,6 @@
 (ns anglican.infcomp.flatbuffers.proposal-reply
   (:require [anglican.infcomp.flatbuffers.protocols :as p])
-  (:import [infcomp.protocol ProposalReply ProposalDistribution NormalProposal UniformDiscreteProposal]
+  (:import [infcomp.flatbuffers MessageBody ProposalReply ProposalDistribution NormalProposal UniformDiscreteProposal]
            [java.nio ByteBuffer]))
 
 (deftype ProposalReplyClj [proposal]
@@ -9,23 +9,21 @@
                                                        (p/pack-builder proposal builder))]
                                  (ProposalReply/startProposalReply builder)
                                  (if proposal
-                                   (ProposalReply/addProposalType builder (p/union-type proposal)))
+                                   (ProposalReply/addProposalType builder (p/proposal-distribution-type proposal)))
                                  (if proposal
                                    (ProposalReply/addProposal builder proposal-packed))
-                                 (ProposalReply/endProposalReply builder))))
+                                 (ProposalReply/endProposalReply builder)))
 
-(extend-protocol p/PUnpack
-  (Class/forName "[B")
-  (unpack [this] (let [buf (ByteBuffer/wrap this)
-                       proposal-reply (ProposalReply/getRootAsProposalReply buf)]
-                   (p/unpack proposal-reply)))
+  p/PMessageBodyType
+  (message-body-type [this] MessageBody/ProposalReply))
 
-  ProposalReply
+(extend-type ProposalReply
+  p/PUnpack
   (unpack [this] (let [proposal-type (.proposalType this)
-                       proposal (cond
-                                 (= proposal-type ProposalDistribution/NormalProposal)
+                       proposal (case proposal-type
+                                 ProposalDistribution/NormalProposal
                                  (p/unpack (cast NormalProposal (.proposal this (NormalProposal.))))
 
-                                 (= proposal-type ProposalDistribution/UniformDiscreteProposal)
+                                 ProposalDistribution/UniformDiscreteProposal
                                  (p/unpack (cast UniformDiscreteProposal (.proposal this (UniformDiscreteProposal.)))))]
                    (ProposalReplyClj. proposal))))

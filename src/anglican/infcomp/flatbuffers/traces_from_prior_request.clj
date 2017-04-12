@@ -1,6 +1,6 @@
 (ns anglican.infcomp.flatbuffers.traces-from-prior-request
   (:require [anglican.infcomp.flatbuffers.protocols :as p])
-  (:import [infcomp.protocol TracesFromPriorRequest]
+  (:import [infcomp.flatbuffers MessageBody TracesFromPriorRequest]
            [java.nio ByteBuffer]))
 
 (deftype TracesFromPriorRequestClj [num-traces]
@@ -9,14 +9,12 @@
                                  (TracesFromPriorRequest/startTracesFromPriorRequest builder)
                                  (if num-traces
                                    (TracesFromPriorRequest/addNumTraces builder num-traces))
-                                 (TracesFromPriorRequest/endTracesFromPriorRequest builder))))
+                                 (TracesFromPriorRequest/endTracesFromPriorRequest builder)))
 
-(extend-protocol p/PUnpack
-  (Class/forName "[B")
-  (unpack [this] (let [buf (ByteBuffer/wrap this)
-                       traces-from-prior-request (TracesFromPriorRequest/getRootAsTracesFromPriorRequest buf)]
-                   (p/unpack traces-from-prior-request)))
+  p/PMessageBodyType
+  (message-body-type [this] MessageBody/TracesFromPriorRequest))
 
-  TracesFromPriorRequest
+(extend-type TracesFromPriorRequest
+  p/PUnpack
   (unpack [this] (let [num-traces (.numTraces this)]
                    (TracesFromPriorRequestClj. num-traces))))

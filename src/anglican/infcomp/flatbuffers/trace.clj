@@ -1,6 +1,6 @@
 (ns anglican.infcomp.flatbuffers.trace
   (:require [anglican.infcomp.flatbuffers.protocols :as p])
-  (:import [infcomp.protocol Trace]
+  (:import [infcomp.flatbuffers Trace]
            [java.nio ByteBuffer]))
 
 (deftype TraceClj [observes samples]
@@ -17,13 +17,8 @@
                                    (Trace/addSamples builder packed-samples))
                                  (Trace/endTrace builder))))
 
-(extend-protocol p/PUnpack
-  (Class/forName "[B")
-  (unpack [this] (let [buf (ByteBuffer/wrap this)
-                       trace (Trace/getRootAsTrace buf)]
-                   (p/unpack trace)))
-
-  Trace
+(extend-type Trace
+  p/PUnpack
   (unpack [this] (let [observes (p/unpack (.observes this))
                        samples (mapv #(p/unpack (.samples this %))
                                      (range (.samplesLength this)))]
