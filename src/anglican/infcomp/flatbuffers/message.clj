@@ -1,11 +1,6 @@
 (ns anglican.infcomp.flatbuffers.message
   (:require [anglican.infcomp.flatbuffers.protocols :as p]
-            anglican.infcomp.flatbuffers.traces-from-prior-request
-            anglican.infcomp.flatbuffers.traces-from-prior-reply
-            anglican.infcomp.flatbuffers.observes-init-request
-            anglican.infcomp.flatbuffers.observes-init-reply
-            anglican.infcomp.flatbuffers.proposal-request
-            anglican.infcomp.flatbuffers.proposal-reply)
+            [anglican.infcomp.flatbuffers traces-from-prior-request traces-from-prior-reply observes-init-request observes-init-reply proposal-request proposal-reply])
   (:import [infcomp.flatbuffers Message MessageBody TracesFromPriorRequest TracesFromPriorReply ObservesInitRequest ObservesInitReply ProposalRequest ProposalReply]
            [java.nio ByteBuffer]))
 

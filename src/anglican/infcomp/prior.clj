@@ -16,9 +16,9 @@
   Stores samples in state."
   (let [state (:state obs)
         observe-address (:id obs)
-        observe-instance (inc (count (filter #(= observe-address (:observe-address %))
-                                             (:observes state))))
-        time-index (inc (count (:observes state)))
+        observe-instance (count (filter #(= observe-address (:observe-address %))
+                                             (:observes state)))
+        time-index (count (:observes state))
         value (sample* (:dist obs))
         updated-state (update-in state
                                  [:observes]
@@ -35,10 +35,10 @@
   Stores samples in state."
   (let [state (:state smp)
         sample-address (:id smp)
-        sample-instance (inc (count (filter #(= sample-address (:sample-address %))
-                                            (:samples state))))
+        sample-instance (count (filter #(= sample-address (:sample-address %))
+                                       (:samples state)))
         proposal (get-proposal (:dist smp))
-        time-index (inc (count (:samples state)))
+        time-index (count (:samples state))
         value (sample* (:dist smp))
         updated-state (update-in state
                                  [:samples]
@@ -46,10 +46,10 @@
                                  (array-map :time-index time-index
                                             :sample-address sample-address
                                             :sample-instance sample-instance
-                                            :proposal-name (:proposal-name proposal)
-                                            :proposal-extra-params (:proposal-extra-params proposal)
+                                            :proposal proposal
                                             :value value))]
     #((:cont smp) value updated-state)))
+
 
 (defmethod checkpoint [::algorithm anglican.trap.result] [_ res]
   res)

@@ -1,6 +1,7 @@
 (ns anglican.infcomp.flatbuffers.ndarray
   (:require [anglican.infcomp.flatbuffers.java-interop :refer [byte-buffer-to-double-vec byte-buffer-to-int-vec]]
-            [anglican.infcomp.flatbuffers.protocols :as p])
+            [anglican.infcomp.flatbuffers.protocols :as p]
+            [clojure.core.matrix :as m])
   (:import [infcomp.flatbuffers NDArray]
            [java.nio ByteBuffer]))
 
@@ -16,6 +17,26 @@
   p/PDeepEquals
   (deep-equals [this other] (and (= data (.data other))
                                  (= shape (.shape other)))))
+
+(defn to-NDArrayClj
+  "Input:
+    data: number or nested list/vector
+
+  Output:
+    NDArrayClj object"
+  [x]
+  (let [x (if (number? x) [x] x)]
+    (NDArrayClj. (flatten x) (m/shape x))))
+
+(defn from-NDArrayClj
+  "Input:
+  nd-array-clj: NDArrayClj object
+
+  Output:
+  nested list/vector."
+  [nd-array-clj]
+  (m/reshape (.data nd-array-clj)
+             (.shape nd-array-clj)))
 
 (extend-type NDArray
   p/PUnpack

@@ -15,7 +15,7 @@
   p/PMessageBodyType
   (message-body-type [this] MessageBody/ObservesInitRequest))
 
-(extend-protocol p/PUnpack
-  ObservesInitRequest
+(extend-type ObservesInitRequest
+  p/PUnpack
   (unpack [this] (let [observes (p/unpack (.observes this))]
                    (ObservesInitRequestClj. observes))))
