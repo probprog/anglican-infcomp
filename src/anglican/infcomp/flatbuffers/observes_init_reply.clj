@@ -8,7 +8,7 @@
   (pack-builder [this builder] (do
                                  (ObservesInitReply/startObservesInitReply builder)
                                  (if (not (nil? success))
-                                   (ObservesInitReply/addOk builder success))
+                                   (ObservesInitReply/addSuccess builder success))
                                  (ObservesInitReply/endObservesInitReply builder)))
 
   p/PMessageBodyType
