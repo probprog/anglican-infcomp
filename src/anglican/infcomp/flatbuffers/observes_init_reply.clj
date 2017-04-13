@@ -3,12 +3,12 @@
   (:import [infcomp.flatbuffers MessageBody ObservesInitReply]
            [java.nio ByteBuffer]))
 
-(deftype ObservesInitReplyClj [ok]
+(deftype ObservesInitReplyClj [success]
   p/PPackBuilder
   (pack-builder [this builder] (do
                                  (ObservesInitReply/startObservesInitReply builder)
-                                 (if (not (nil? ok))
-                                   (ObservesInitReply/addOk builder ok))
+                                 (if (not (nil? success))
+                                   (ObservesInitReply/addOk builder success))
                                  (ObservesInitReply/endObservesInitReply builder)))
 
   p/PMessageBodyType
@@ -16,5 +16,5 @@
 
 (extend-type ObservesInitReply
   p/PUnpack
-  (unpack [this] (let [ok (.ok this)]
-                   (ObservesInitReplyClj. ok))))
+  (unpack [this] (let [success (.success this)]
+                   (ObservesInitReplyClj. success))))

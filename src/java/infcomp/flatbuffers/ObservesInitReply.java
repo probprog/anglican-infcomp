@@ -14,17 +14,17 @@ public final class ObservesInitReply extends Table {
   public void __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; }
   public ObservesInitReply __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public boolean ok() { int o = __offset(4); return o != 0 ? 0!=bb.get(o + bb_pos) : false; }
+  public boolean success() { int o = __offset(4); return o != 0 ? 0!=bb.get(o + bb_pos) : false; }
 
   public static int createObservesInitReply(FlatBufferBuilder builder,
-      boolean ok) {
+      boolean success) {
     builder.startObject(1);
-    ObservesInitReply.addOk(builder, ok);
+    ObservesInitReply.addSuccess(builder, success);
     return ObservesInitReply.endObservesInitReply(builder);
   }
 
   public static void startObservesInitReply(FlatBufferBuilder builder) { builder.startObject(1); }
-  public static void addOk(FlatBufferBuilder builder, boolean ok) { builder.addBoolean(0, ok, false); }
+  public static void addSuccess(FlatBufferBuilder builder, boolean success) { builder.addBoolean(0, success, false); }
   public static int endObservesInitReply(FlatBufferBuilder builder) {
     int o = builder.endObject();
     return o;
