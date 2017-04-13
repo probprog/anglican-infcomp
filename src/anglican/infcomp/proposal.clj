@@ -2,7 +2,7 @@
   "Various functions used for Inference Compilation"
   (:require [clojure.string :as str]
             [clojure.core.matrix :as m]
-            [anglican.infcomp.proposal-dists :refer :all]
+            [anglican.infcomp.dists :refer :all]
             [anglican.runtime :refer :all]
             [anglican.infcomp.flatbuffers normal-proposal uniform-discrete-proposal])
   (:import anglican.infcomp.flatbuffers.normal_proposal.NormalProposalClj

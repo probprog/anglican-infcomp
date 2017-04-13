@@ -14,21 +14,25 @@ public final class ProposalReply extends Table {
   public void __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; }
   public ProposalReply __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public byte proposalType() { int o = __offset(4); return o != 0 ? bb.get(o + bb_pos) : 0; }
-  public Table proposal(Table obj) { int o = __offset(6); return o != 0 ? __union(obj, o) : null; }
+  public boolean success() { int o = __offset(4); return o != 0 ? 0!=bb.get(o + bb_pos) : false; }
+  public byte proposalType() { int o = __offset(6); return o != 0 ? bb.get(o + bb_pos) : 0; }
+  public Table proposal(Table obj) { int o = __offset(8); return o != 0 ? __union(obj, o) : null; }
 
   public static int createProposalReply(FlatBufferBuilder builder,
+      boolean success,
       byte proposal_type,
       int proposalOffset) {
-    builder.startObject(2);
+    builder.startObject(3);
     ProposalReply.addProposal(builder, proposalOffset);
     ProposalReply.addProposalType(builder, proposal_type);
+    ProposalReply.addSuccess(builder, success);
     return ProposalReply.endProposalReply(builder);
   }
 
-  public static void startProposalReply(FlatBufferBuilder builder) { builder.startObject(2); }
-  public static void addProposalType(FlatBufferBuilder builder, byte proposalType) { builder.addByte(0, proposalType, 0); }
-  public static void addProposal(FlatBufferBuilder builder, int proposalOffset) { builder.addOffset(1, proposalOffset, 0); }
+  public static void startProposalReply(FlatBufferBuilder builder) { builder.startObject(3); }
+  public static void addSuccess(FlatBufferBuilder builder, boolean success) { builder.addBoolean(0, success, false); }
+  public static void addProposalType(FlatBufferBuilder builder, byte proposalType) { builder.addByte(1, proposalType, 0); }
+  public static void addProposal(FlatBufferBuilder builder, int proposalOffset) { builder.addOffset(2, proposalOffset, 0); }
   public static int endProposalReply(FlatBufferBuilder builder) {
     int o = builder.endObject();
     return o;

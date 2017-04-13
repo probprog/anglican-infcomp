@@ -1,4 +1,4 @@
-(ns anglican.infcomp.proposal-dists
+(ns anglican.infcomp.dists
   "Proposal distributions used in Inference Compilation"
   (:require [anglican.runtime :refer [observe* sample* defdist discrete beta categorical dirichlet flip log mvn normal]]
             [anglican.rmh-dists :refer :all]
@@ -129,5 +129,3 @@
   [dist (continuous-min-max min max mode certainty)]
   (sample* [this] (sample* dist))
   (observe* [this value] (observe* dist value)))
-
-

@@ -3,11 +3,13 @@
   (:import [infcomp.flatbuffers MessageBody ProposalReply ProposalDistribution NormalProposal UniformDiscreteProposal]
            [java.nio ByteBuffer]))
 
-(deftype ProposalReplyClj [proposal]
+(deftype ProposalReplyClj [success proposal]
   p/PPackBuilder
   (pack-builder [this builder] (let [proposal-packed (if proposal
                                                        (p/pack-builder proposal builder))]
                                  (ProposalReply/startProposalReply builder)
+                                 (if (not (nil? success))
+                                   (ProposalReply/addSuccess builder success))
                                  (if proposal
                                    (ProposalReply/addProposalType builder (p/proposal-distribution-type proposal)))
                                  (if proposal
@@ -19,11 +21,12 @@
 
 (extend-type ProposalReply
   p/PUnpack
-  (unpack [this] (let [proposal-type (.proposalType this)
+  (unpack [this] (let [success (.success this)
+                       proposal-type (.proposalType this)
                        proposal (condp = proposal-type
                                  ProposalDistribution/NormalProposal
                                  (p/unpack (cast NormalProposal (.proposal this (NormalProposal.))))
 
                                  ProposalDistribution/UniformDiscreteProposal
                                  (p/unpack (cast UniformDiscreteProposal (.proposal this (UniformDiscreteProposal.)))))]
-                   (ProposalReplyClj. proposal))))
+                   (ProposalReplyClj. success proposal))))

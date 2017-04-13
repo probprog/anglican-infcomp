@@ -7,6 +7,6 @@
                  [anglican "1.0.0"]
                  [org.zeromq/jeromq "0.3.3"]
                  [org.zeromq/cljzmq "0.1.4" :exclusions [org.zeromq/jzmq]]
-                 [clojure-msgpack "1.2.0"]]
+                 [org.clojure/tools.logging "0.3.1"]]
   :plugins [[lein-codox "0.10.1"]]
   :java-source-paths ["src/java"])

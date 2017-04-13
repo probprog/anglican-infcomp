@@ -5,10 +5,10 @@
             [clojure.core.matrix :as m]
             [zeromq.zmq :as zmq]
             [anglican.infcomp.flatbuffers.protocols :as fbs]
-            [msgpack clojure-extensions]
             [anglican.runtime :refer [sample* observe*]]
             [anglican.inference :refer [checkpoint infer exec]]
             [anglican.state :refer [add-log-weight]]
+            [clojure.tools.logging :as log]
             [anglican.infcomp.proposal :refer [get-proposal get-proposal-constructor]]
             [anglican.infcomp.flatbuffers.ndarray :refer [to-NDArrayClj from-NDArrayClj]]
             [anglican.infcomp.flatbuffers observes-init-request ndarray proposal-request sample normal-proposal uniform-discrete-proposal message proposal-reply])
@@ -33,12 +33,12 @@
 
 (defmethod checkpoint [::algorithm anglican.trap.sample] [_ smp]
   (let [state (:state smp)
+        socket (::socket state)
         samples (::samples state)
 
         sample-address (str (:id smp))
         sample-instance (count (filter #(= sample-address (:sample-address %))
                                        samples))
-        socket (::socket state)
 
         ;; Prepare message
         prior-dist (:dist smp)
@@ -58,15 +58,19 @@
                                                    prev-sample-instance
                                                    nil
                                                    (to-NDArrayClj prev-sample-value))))))
-        proposal-from-torch (let [proposal-reply (.body (fbs/unpack-message (zmq/receive socket)))]
-                              (assert (instance? ProposalReplyClj proposal-reply))
-                              (.proposal proposal-reply))
-        proposal-params (condp = (type proposal)
-                          UniformDiscreteProposalClj [(.min proposal)
-                                                      (.max proposal)
-                                                      (from-NDArrayClj (.probabilities proposal-from-torch))]
-                          NormalProposalClj [(.mean proposal-from-torch) (.std proposal-from-torch)])
-        proposal-dist (apply (get-proposal-constructor prior-dist) proposal-params)
+        proposal-dist (let [proposal-reply (.body (fbs/unpack-message (zmq/receive socket)))]
+                        (assert (instance? ProposalReplyClj proposal-reply))
+                        (if (.success proposal-reply)
+                          (let [proposal-from-nn (.proposal proposal-reply)
+                                proposal-params (condp = (type proposal)
+                                                  UniformDiscreteProposalClj [(.min proposal)
+                                                                              (.max proposal)
+                                                                              (from-NDArrayClj (.probabilities proposal-from-nn))]
+                                                  NormalProposalClj [(.mean proposal-from-nn) (.std proposal-from-nn)])]
+                            (apply (get-proposal-constructor prior-dist) proposal-params))
+                          (do
+                            (log/warn (str "Proposal parameters for " prior-dist " is not available: Using prior proposal instead."))
+                            prior-dist)))
         value (sample* proposal-dist)
         log-q (observe* proposal-dist value)
         log-p (observe* prior-dist value)
@@ -76,7 +80,7 @@
                                  (array-map :sample-address sample-address
                                             :sample-instance sample-instance
                                             :value value
-                                            :proposal-params proposal-params))
+                                            :proposal-dist proposal-dist))
 
         ;; Modify weights
         weight-update (- log-p log-q)
