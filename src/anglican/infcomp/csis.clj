@@ -58,7 +58,7 @@
                                                    prev-sample-instance
                                                    nil
                                                    (to-NDArrayClj prev-sample-value))))))
-        proposal-from-torch (let [proposal-reply (.body (fbs/unpack (zmq/receive socket)))]
+        proposal-from-torch (let [proposal-reply (.body (fbs/unpack-message (zmq/receive socket)))]
                               (assert (instance? ProposalReplyClj proposal-reply))
                               (.proposal proposal-reply))
         proposal-params (condp = (type proposal)

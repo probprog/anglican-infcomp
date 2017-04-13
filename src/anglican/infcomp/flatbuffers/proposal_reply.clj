@@ -20,7 +20,7 @@
 (extend-type ProposalReply
   p/PUnpack
   (unpack [this] (let [proposal-type (.proposalType this)
-                       proposal (case proposal-type
+                       proposal (condp = proposal-type
                                  ProposalDistribution/NormalProposal
                                  (p/unpack (cast NormalProposal (.proposal this (NormalProposal.))))
 
