@@ -79,8 +79,7 @@
                                  conj
                                  (array-map :sample-address sample-address
                                             :sample-instance sample-instance
-                                            :value value
-                                            :proposal-dist proposal-dist))
+                                            :value value))
 
         ;; Modify weights
         weight-update (- log-p log-q)
@@ -109,8 +108,7 @@
   (-> res
       (dissoc-in [:state ::context])
       (dissoc-in [:state ::socket])
-      (dissoc-in [:state ::tcp-endpoint])
-      #_(dissoc-in [:state ::samples])))
+      (dissoc-in [:state ::tcp-endpoint])))
 
 (defmethod infer :csis [_ prog value & {:keys [tcp-endpoint observe-embedder-input]
                                         :or {tcp-endpoint "tcp://localhost:6666"}}]
