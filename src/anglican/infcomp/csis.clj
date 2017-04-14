@@ -12,12 +12,14 @@
             [anglican.infcomp.proposal :refer [get-proposal get-proposal-constructor]]
             [anglican.infcomp.flatbuffers.ndarray :refer [to-NDArrayClj from-NDArrayClj]]
             [anglican.infcomp.flatbuffers observes-init-request ndarray
-             proposal-request sample discrete-proposal flip-proposal
-             normal-proposal uniform-discrete-proposal message proposal-reply])
+             proposal-request sample categorical-proposal discrete-proposal
+             flip-proposal normal-proposal uniform-discrete-proposal message
+             proposal-reply])
   (:import anglican.infcomp.flatbuffers.observes_init_request.ObservesInitRequestClj
            anglican.infcomp.flatbuffers.ndarray.NDArrayClj
            anglican.infcomp.flatbuffers.proposal_request.ProposalRequestClj
            anglican.infcomp.flatbuffers.sample.SampleClj
+           anglican.infcomp.flatbuffers.categorical_proposal.CategoricalProposalClj
            anglican.infcomp.flatbuffers.discrete_proposal.DiscreteProposalClj
            anglican.infcomp.flatbuffers.flip_proposal.FlipProposalClj
            anglican.infcomp.flatbuffers.normal_proposal.NormalProposalClj
@@ -67,6 +69,7 @@
                         (if (.success proposal-reply)
                           (let [proposal-from-nn (.proposal proposal-reply)
                                 proposal-params (condp = (type proposal-from-nn)
+                                                  CategoricalProposalClj [(mapv vector (:values prior-dist) (.probabilities proposal-from-nn))]
                                                   DiscreteProposalClj [(.probabilities proposal-from-nn)]
                                                   FlipProposalClj [(.probability proposal-from-nn)]
                                                   NormalProposalClj [(.mean proposal-from-nn) (.std proposal-from-nn)]

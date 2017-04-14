@@ -1,7 +1,8 @@
 (ns anglican.infcomp.flatbuffers.sample
   (:require [anglican.infcomp.flatbuffers.protocols :as p])
-  (:import [infcomp.flatbuffers Sample ProposalDistribution DiscreteProposal
-            FlipProposal NormalProposal UniformDiscreteProposal]
+  (:import [infcomp.flatbuffers Sample ProposalDistribution CategoricalProposal
+            DiscreteProposal FlipProposal NormalProposal
+            UniformDiscreteProposal]
            [java.nio ByteBuffer]))
 
 (deftype SampleClj [time address instance proposal value]
@@ -34,6 +35,9 @@
                        instance (.instance this)
                        proposal-type (.proposalType this)
                        proposal (condp = proposal-type
+                                  ProposalDistribution/CategoricalProposal
+                                  (p/unpack (cast CategoricalProposal (.proposal this (CategoricalProposal.))))
+
                                   ProposalDistribution/DiscreteProposal
                                   (p/unpack (cast DiscreteProposal (.proposal this (DiscreteProposal.))))
 
