@@ -74,6 +74,13 @@
   (sample* [this] (sample* dist))
   (observe* [this value] (observe* dist value)))
 
+(defdist discrete-proposal
+  "Proposal distribution for discrete"
+  [weights]
+  [dist (discrete weights)]
+  (sample* [this] (sample* dist))
+  (observe* [this value] (observe* dist value)))
+
 (defdist dirichlet-proposal
   "Proposal distribution for dirichlet"
   [alpha]

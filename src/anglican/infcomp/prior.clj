@@ -17,7 +17,7 @@
   (let [state (:state obs)
         observe-address (:id obs)
         observe-instance (count (filter #(= observe-address (:observe-address %))
-                                             (:observes state)))
+                                        (:observes state)))
         time-index (count (:observes state))
         value (sample* (:dist obs))
         updated-state (update-in state

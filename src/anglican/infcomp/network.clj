@@ -6,15 +6,14 @@
             [anglican.infcomp.prior :refer [sample-from-prior]]
             [clojure.walk :refer [stringify-keys]]
             [anglican.infcomp.flatbuffers.ndarray :refer [to-NDArrayClj]]
-            [anglican.infcomp.flatbuffers traces-from-prior-request traces-from-prior-reply trace ndarray sample normal-proposal uniform-discrete-proposal message])
-  (:import [anglican.infcomp.flatbuffers.traces_from_prior_request TracesFromPriorRequestClj]
-           [anglican.infcomp.flatbuffers.traces_from_prior_reply TracesFromPriorReplyClj]
-           [anglican.infcomp.flatbuffers.trace TraceClj]
-           [anglican.infcomp.flatbuffers.ndarray NDArrayClj]
-           [anglican.infcomp.flatbuffers.sample SampleClj]
-           [anglican.infcomp.flatbuffers.normal_proposal NormalProposalClj]
-           [anglican.infcomp.flatbuffers.uniform_discrete_proposal UniformDiscreteProposalClj]
-           [anglican.infcomp.flatbuffers.message MessageClj]))
+            [anglican.infcomp.flatbuffers traces-from-prior-request
+             traces-from-prior-reply trace ndarray sample message])
+  (:import anglican.infcomp.flatbuffers.traces_from_prior_request.TracesFromPriorRequestClj
+           anglican.infcomp.flatbuffers.traces_from_prior_reply.TracesFromPriorReplyClj
+           anglican.infcomp.flatbuffers.trace.TraceClj
+           anglican.infcomp.flatbuffers.ndarray.NDArrayClj
+           anglican.infcomp.flatbuffers.sample.SampleClj
+           anglican.infcomp.flatbuffers.message.MessageClj))
 
 (defn start-torch-connection
   "Starts a ZeroMQ connection with Torch in order to compile the probabilistic
