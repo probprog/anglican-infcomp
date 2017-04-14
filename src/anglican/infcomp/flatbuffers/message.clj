@@ -43,12 +43,3 @@
                               (= body-type MessageBody/ProposalReply)
                               (p/unpack (cast ProposalReply (.body this (ProposalReply.)))))]
                    (MessageClj. body))))
-
-;; MessageBody/TracesFromPriorRequest
-;; (case (byte 1)
-;;   MessageBody/TracesFromPriorRequest
-;;   47)
-
-;; (cond
-;;  (= (byte 1) MessageBody/TracesFromPriorRequest)
-;;  47)

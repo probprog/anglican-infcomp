@@ -5,10 +5,13 @@ package infcomp.flatbuffers;
 public final class ProposalDistribution {
   private ProposalDistribution() { }
   public static final byte NONE = 0;
-  public static final byte UniformDiscreteProposal = 1;
-  public static final byte NormalProposal = 2;
+  public static final byte CategoricalProposal = 1;
+  public static final byte DiscreteProposal = 2;
+  public static final byte FlipProposal = 3;
+  public static final byte NormalProposal = 4;
+  public static final byte UniformDiscreteProposal = 5;
 
-  public static final String[] names = { "NONE", "UniformDiscreteProposal", "NormalProposal", };
+  public static final String[] names = { "NONE", "CategoricalProposal", "DiscreteProposal", "FlipProposal", "NormalProposal", "UniformDiscreteProposal", };
 
   public static String name(int e) { return names[e]; }
 }

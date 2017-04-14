@@ -40,6 +40,10 @@
         proposal (get-proposal (:dist smp))
         time-index (count (:samples state))
         value (sample* (:dist smp))
+        ;; should use a prior distribution in flatbuffers
+        value (if (instance? anglican.runtime.flip-distribution (:dist smp))
+                (if value 1 0)
+                value)
         updated-state (update-in state
                                  [:samples]
                                  conj

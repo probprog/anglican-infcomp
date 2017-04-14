@@ -1,6 +1,7 @@
 (ns anglican.infcomp.flatbuffers.proposal-reply
   (:require [anglican.infcomp.flatbuffers.protocols :as p])
-  (:import [infcomp.flatbuffers MessageBody ProposalReply ProposalDistribution NormalProposal UniformDiscreteProposal]
+  (:import [infcomp.flatbuffers MessageBody ProposalReply ProposalDistribution
+            FlipProposal NormalProposal UniformDiscreteProposal]
            [java.nio ByteBuffer]))
 
 (deftype ProposalReplyClj [success proposal]
@@ -24,9 +25,12 @@
   (unpack [this] (let [success (.success this)
                        proposal-type (.proposalType this)
                        proposal (condp = proposal-type
-                                 ProposalDistribution/NormalProposal
-                                 (p/unpack (cast NormalProposal (.proposal this (NormalProposal.))))
+                                  ProposalDistribution/FlipProposal
+                                  (p/unpack (cast FlipProposal (.proposal this (FlipProposal.))))
 
-                                 ProposalDistribution/UniformDiscreteProposal
-                                 (p/unpack (cast UniformDiscreteProposal (.proposal this (UniformDiscreteProposal.)))))]
+                                  ProposalDistribution/NormalProposal
+                                  (p/unpack (cast NormalProposal (.proposal this (NormalProposal.))))
+
+                                  ProposalDistribution/UniformDiscreteProposal
+                                  (p/unpack (cast UniformDiscreteProposal (.proposal this (UniformDiscreteProposal.)))))]
                    (ProposalReplyClj. success proposal))))

@@ -11,20 +11,23 @@
             [clojure.tools.logging :as log]
             [anglican.infcomp.proposal :refer [get-proposal get-proposal-constructor]]
             [anglican.infcomp.flatbuffers.ndarray :refer [to-NDArrayClj from-NDArrayClj]]
-            [anglican.infcomp.flatbuffers observes-init-request ndarray proposal-request sample normal-proposal uniform-discrete-proposal message proposal-reply])
-  (:import [anglican.infcomp.flatbuffers.observes_init_request ObservesInitRequestClj]
-           [anglican.infcomp.flatbuffers.ndarray NDArrayClj]
-           [anglican.infcomp.flatbuffers.proposal_request ProposalRequestClj]
-           [anglican.infcomp.flatbuffers.sample SampleClj]
-           [anglican.infcomp.flatbuffers.normal_proposal NormalProposalClj]
-           [anglican.infcomp.flatbuffers.uniform_discrete_proposal UniformDiscreteProposalClj]
-           [anglican.infcomp.flatbuffers.message MessageClj]
-           [anglican.infcomp.flatbuffers.proposal_reply ProposalReplyClj]))
+            [anglican.infcomp.flatbuffers observes-init-request ndarray
+             proposal-request sample flip-proposal normal-proposal
+             uniform-discrete-proposal message proposal-reply])
+  (:import anglican.infcomp.flatbuffers.observes_init_request.ObservesInitRequestClj
+           anglican.infcomp.flatbuffers.ndarray.NDArrayClj
+           anglican.infcomp.flatbuffers.proposal_request.ProposalRequestClj
+           anglican.infcomp.flatbuffers.sample.SampleClj
+           anglican.infcomp.flatbuffers.flip_proposal.FlipProposalClj
+           anglican.infcomp.flatbuffers.normal_proposal.NormalProposalClj
+           anglican.infcomp.flatbuffers.uniform_discrete_proposal.UniformDiscreteProposalClj
+           anglican.infcomp.flatbuffers.message.MessageClj
+           anglican.infcomp.flatbuffers.proposal_reply.ProposalReplyClj))
 
 (derive ::algorithm :anglican.inference/algorithm)
 
 (def initial-state
-  "initial state for Compiled SIS (CUDA)"
+  "initial state for Compiled SIS"
   (into anglican.state/initial-state
         {::tcp-endpoint nil
          ::context nil
@@ -63,10 +66,11 @@
                         (if (.success proposal-reply)
                           (let [proposal-from-nn (.proposal proposal-reply)
                                 proposal-params (condp = (type proposal)
+                                                  FlipProposalClj (.probability proposal-from-nn)
+                                                  NormalProposalClj [(.mean proposal-from-nn) (.std proposal-from-nn)]
                                                   UniformDiscreteProposalClj [(.min proposal)
                                                                               (.max proposal)
-                                                                              (from-NDArrayClj (.probabilities proposal-from-nn))]
-                                                  NormalProposalClj [(.mean proposal-from-nn) (.std proposal-from-nn)])]
+                                                                              (from-NDArrayClj (.probabilities proposal-from-nn))])]
                             (apply (get-proposal-constructor prior-dist) proposal-params))
                           (do
                             (log/warn (str "Proposal parameters for " prior-dist " is not available: Using prior proposal instead."))
