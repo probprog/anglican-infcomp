@@ -41,10 +41,6 @@
         time-index (count (:samples state))
         value (sample* (:dist smp))
         ;; should use a prior distribution in flatbuffers
-        value (condp = (type (:dist smp))
-                anglican.runtime.categorical-distribution (get (:index (:dist smp)) value)
-                anglican.runtime.flip-distribution (if value 1 0)
-                value)
         updated-state (update-in state
                                  [:samples]
                                  conj
@@ -52,7 +48,10 @@
                                             :sample-address sample-address
                                             :sample-instance sample-instance
                                             :proposal proposal
-                                            :value value))]
+                                            :value (condp = (type (:dist smp))
+                                                     anglican.runtime.categorical-distribution (get (:index (:dist smp)) value)
+                                                     anglican.runtime.flip-distribution (if value 1 0)
+                                                     value)))]
     #((:cont smp) value updated-state)))
 
 
