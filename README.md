@@ -1,4 +1,4 @@
-# Clojure library for Inference Compilation and Universal Probabilistic Programming
+# Clojure library for Inference Compilation in Anglican
 
 Code for Inference Compilation and Universal Probabilistic Programming ([main project page][project-page-link]).
 
@@ -18,7 +18,7 @@ If you use this code in your work, please cite our [paper][paper-link]:
 }
 ```
 
-[project-page-link]: http://tuananhle.co.uk/compiled-inference
+[project-page-link]: https://probprog.github.io/inference-compilation
 [examples-link]: https://github.com/tuananhle7/torch-csis/tree/master/examples
 [torch-csis-repo-link]: https://github.com/tuananhle7/torch-csis
 [tutorial-link]: https://github.com/tuananhle7/torch-csis/blob/master/TUTORIAL.md
