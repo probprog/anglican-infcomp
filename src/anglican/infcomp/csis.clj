@@ -88,7 +88,10 @@
                                  conj
                                  (array-map :sample-address sample-address
                                             :sample-instance sample-instance
-                                            :value value))
+                                            :value (condp = (type prior-dist)
+                                                     anglican.runtime.categorical-distribution (get (:index prior-dist) value)
+                                                     anglican.runtime.flip-distribution (if value 1 0)
+                                                     value)))
 
         ;; Modify weights
         weight-update (- log-p log-q)
