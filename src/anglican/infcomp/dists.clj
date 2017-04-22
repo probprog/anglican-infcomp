@@ -125,8 +125,8 @@
 
 (defdist uniform-discrete-proposal
   "Proposal distribution for uniform-discrete"
-  [min max weights]
-  [dist (discrete-min-max min max weights)]
+  [min size weights]
+  [dist (discrete-min-max min (+ min size) weights)]
   (sample* [this] (sample* dist))
   (observe* [this value] (observe* dist value)))
 

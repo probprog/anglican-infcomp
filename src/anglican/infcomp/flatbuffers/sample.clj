@@ -1,16 +1,15 @@
 (ns anglican.infcomp.flatbuffers.sample
   (:require [anglican.infcomp.flatbuffers.protocols :as p])
-  (:import [infcomp.flatbuffers Sample ProposalDistribution CategoricalProposal
-            DiscreteProposal FlipProposal NormalProposal
-            UniformDiscreteProposal]
+  (:import [infcomp.flatbuffers Sample Distribution Categorical
+            Discrete Flip Normal UniformDiscrete]
            [java.nio ByteBuffer]))
 
-(deftype SampleClj [time address instance proposal value]
+(deftype SampleClj [time address instance distribution value]
   p/PPackBuilder
   (pack-builder [this builder] (let [packed-address (if address
                                                       (.createString builder address))
-                                     packed-proposal (if proposal
-                                                       (p/pack-builder proposal builder))
+                                     packed-distribution (if distribution
+                                                           (p/pack-builder distribution builder))
                                      packed-value (if value
                                                     (p/pack-builder value builder))]
                                  (Sample/startSample builder)
@@ -20,10 +19,10 @@
                                    (Sample/addAddress builder packed-address))
                                  (if instance
                                    (Sample/addInstance builder instance))
-                                 (if proposal
-                                   (Sample/addProposalType builder (p/proposal-distribution-type proposal)))
-                                 (if proposal
-                                   (Sample/addProposal builder packed-proposal))
+                                 (if distribution
+                                   (Sample/addDistributionType builder (p/distribution-type distribution)))
+                                 (if distribution
+                                   (Sample/addDistribution builder packed-distribution))
                                  (if value
                                    (Sample/addValue builder packed-value))
                                  (Sample/endSample builder))))
@@ -33,21 +32,21 @@
   (unpack [this] (let [time (.time this)
                        address (.address this)
                        instance (.instance this)
-                       proposal-type (.proposalType this)
-                       proposal (condp = proposal-type
-                                  ProposalDistribution/CategoricalProposal
-                                  (p/unpack (cast CategoricalProposal (.proposal this (CategoricalProposal.))))
+                       distribution-type (.distributionType this)
+                       distribution (condp = distribution-type
+                                      Distribution/Categorical
+                                      (p/unpack (cast Categorical (.distribution this (Categorical.))))
 
-                                  ProposalDistribution/DiscreteProposal
-                                  (p/unpack (cast DiscreteProposal (.proposal this (DiscreteProposal.))))
+                                      Distribution/Discrete
+                                      (p/unpack (cast Discrete (.distribution this (Discrete.))))
 
-                                  ProposalDistribution/FlipProposal
-                                  (p/unpack (cast FlipProposal (.proposal this (FlipProposal.))))
+                                      Distribution/Flip
+                                      (p/unpack (cast Flip (.distribution this (Flip.))))
 
-                                  ProposalDistribution/NormalProposal
-                                  (p/unpack (cast NormalProposal (.proposal this (NormalProposal.))))
+                                      Distribution/Normal
+                                      (p/unpack (cast Normal (.distribution this (Normal.))))
 
-                                  ProposalDistribution/UniformDiscreteProposal
-                                  (p/unpack (cast UniformDiscreteProposal (.proposal this (UniformDiscreteProposal.)))))
+                                      Distribution/UniformDiscrete
+                                      (p/unpack (cast UniformDiscrete (.distribution this (UniformDiscrete.)))))
                        value (p/unpack (.value this))]
-                   (SampleClj. time address instance proposal value))))
+                   (SampleClj. time address instance distribution value))))

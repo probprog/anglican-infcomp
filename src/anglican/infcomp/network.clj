@@ -102,7 +102,7 @@
                                                                              (get sample "time-index")
                                                                              (get sample "sample-address")
                                                                              (get sample "sample-instance")
-                                                                             (get sample "proposal")
+                                                                             (get sample "distribution")
                                                                              (to-NDArrayClj (get sample "value"))))
                                                                           (get trace "samples"))))
                                                                   prior-samples))]

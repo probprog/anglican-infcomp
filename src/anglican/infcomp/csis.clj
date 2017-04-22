@@ -9,21 +9,21 @@
             [anglican.inference :refer [checkpoint infer exec]]
             [anglican.state :refer [add-log-weight]]
             [clojure.tools.logging :as log]
-            [anglican.infcomp.proposal :refer [get-proposal get-proposal-constructor]]
+            [anglican.infcomp.proposal :refer [get-prior-distribution-clj get-proposal-constructor]]
             [anglican.infcomp.flatbuffers.ndarray :refer [to-NDArrayClj from-NDArrayClj]]
             [anglican.infcomp.flatbuffers observes-init-request ndarray
-             proposal-request sample categorical-proposal discrete-proposal
-             flip-proposal normal-proposal uniform-discrete-proposal message
+             proposal-request sample categorical discrete
+             flip normal uniform-discrete message
              proposal-reply])
   (:import anglican.infcomp.flatbuffers.observes_init_request.ObservesInitRequestClj
            anglican.infcomp.flatbuffers.ndarray.NDArrayClj
            anglican.infcomp.flatbuffers.proposal_request.ProposalRequestClj
            anglican.infcomp.flatbuffers.sample.SampleClj
-           anglican.infcomp.flatbuffers.categorical_proposal.CategoricalProposalClj
-           anglican.infcomp.flatbuffers.discrete_proposal.DiscreteProposalClj
-           anglican.infcomp.flatbuffers.flip_proposal.FlipProposalClj
-           anglican.infcomp.flatbuffers.normal_proposal.NormalProposalClj
-           anglican.infcomp.flatbuffers.uniform_discrete_proposal.UniformDiscreteProposalClj
+           anglican.infcomp.flatbuffers.categorical.CategoricalClj
+           anglican.infcomp.flatbuffers.discrete.DiscreteClj
+           anglican.infcomp.flatbuffers.flip.FlipClj
+           anglican.infcomp.flatbuffers.normal.NormalClj
+           anglican.infcomp.flatbuffers.uniform_discrete.UniformDiscreteClj
            anglican.infcomp.flatbuffers.message.MessageClj
            anglican.infcomp.flatbuffers.proposal_reply.ProposalReplyClj))
 
@@ -48,7 +48,7 @@
 
         ;; Prepare message
         prior-dist (:dist smp)
-        proposal (get-proposal prior-dist)
+        prior-distribution-clj (get-prior-distribution-clj prior-dist)
         prev-sample-value (:value (last samples) -1)
         prev-sample-address (:sample-address (last samples) "")
         prev-sample-instance (:sample-instance (last samples) -1)
@@ -57,7 +57,7 @@
                                        (SampleClj. nil
                                                    sample-address
                                                    sample-instance
-                                                   proposal
+                                                   prior-distribution-clj
                                                    nil)
                                        (SampleClj. nil
                                                    prev-sample-address
@@ -67,15 +67,15 @@
         proposal-dist (let [proposal-reply (.body (fbs/unpack-message (zmq/receive socket)))]
                         (assert (instance? ProposalReplyClj proposal-reply))
                         (if (.success proposal-reply)
-                          (let [proposal-from-nn (.proposal proposal-reply)
-                                proposal-params (condp = (type proposal-from-nn)
-                                                  CategoricalProposalClj [(mapv vector (:values prior-dist) (.probabilities proposal-from-nn))]
-                                                  DiscreteProposalClj [(.probabilities proposal-from-nn)]
-                                                  FlipProposalClj [(.probability proposal-from-nn)]
-                                                  NormalProposalClj [(.mean proposal-from-nn) (.std proposal-from-nn)]
-                                                  UniformDiscreteProposalClj [(.min proposal)
-                                                                              (.max proposal)
-                                                                              (from-NDArrayClj (.probabilities proposal-from-nn))])]
+                          (let [proposal-distribution-clj (.distribution proposal-reply)
+                                proposal-params (condp = (type proposal-distribution-clj)
+                                                  CategoricalClj [(mapv vector (:values prior-dist) (.proposalProbabilities proposal-distribution-clj))]
+                                                  DiscreteClj [(.proposalProbabilities proposal-distribution-clj)]
+                                                  FlipClj [(.proposalProbability proposal-distribution-clj)]
+                                                  NormalClj [(.proposalMean proposal-distribution-clj) (.proposalStd proposal-distribution-clj)]
+                                                  UniformDiscreteClj [(.priorMin prior-distribution-clj)
+                                                                      (.priorSize prior-distribution-clj)
+                                                                      (from-NDArrayClj (.proposalProbabilities proposal-distribution-clj))])]
                             (apply (get-proposal-constructor prior-dist) proposal-params))
                           (do
                             (log/warn (str "Proposal parameters for " prior-dist " is not available: Using prior proposal instead."))

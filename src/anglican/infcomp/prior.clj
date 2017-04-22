@@ -5,7 +5,7 @@
             [clojure.core.matrix :as m]
             [anglican.inference :refer [checkpoint exec]]
             [anglican.runtime :refer [sample*]]
-            [anglican.infcomp.proposal :refer [get-proposal]]))
+            [anglican.infcomp.proposal :refer [get-prior-distribution-clj]]))
 
 (derive ::algorithm :anglican.inference/algorithm)
 
@@ -37,17 +37,16 @@
         sample-address (:id smp)
         sample-instance (count (filter #(= sample-address (:sample-address %))
                                        (:samples state)))
-        proposal (get-proposal (:dist smp))
+        prior-distribution-clj (get-prior-distribution-clj (:dist smp))
         time-index (count (:samples state))
         value (sample* (:dist smp))
-        ;; should use a prior distribution in flatbuffers
         updated-state (update-in state
                                  [:samples]
                                  conj
                                  (array-map :time-index time-index
                                             :sample-address sample-address
                                             :sample-instance sample-instance
-                                            :proposal proposal
+                                            :distribution prior-distribution-clj
                                             :value (condp = (type (:dist smp))
                                                      anglican.runtime.categorical-distribution (get (:index (:dist smp)) value)
                                                      anglican.runtime.flip-distribution (if value 1 0)

@@ -1,21 +1,20 @@
 (ns anglican.infcomp.flatbuffers.proposal-reply
   (:require [anglican.infcomp.flatbuffers.protocols :as p])
-  (:import [infcomp.flatbuffers MessageBody ProposalReply ProposalDistribution
-            CategoricalProposal DiscreteProposal FlipProposal NormalProposal
-            UniformDiscreteProposal]
+  (:import [infcomp.flatbuffers MessageBody ProposalReply Distribution
+            Categorical Discrete Flip Normal UniformDiscrete]
            [java.nio ByteBuffer]))
 
-(deftype ProposalReplyClj [success proposal]
+(deftype ProposalReplyClj [success distribution]
   p/PPackBuilder
-  (pack-builder [this builder] (let [proposal-packed (if proposal
-                                                       (p/pack-builder proposal builder))]
+  (pack-builder [this builder] (let [distribution-packed (if distribution
+                                                           (p/pack-builder distribution builder))]
                                  (ProposalReply/startProposalReply builder)
                                  (if (not (nil? success))
                                    (ProposalReply/addSuccess builder success))
-                                 (if proposal
-                                   (ProposalReply/addProposalType builder (p/proposal-distribution-type proposal)))
-                                 (if proposal
-                                   (ProposalReply/addProposal builder proposal-packed))
+                                 (if distribution
+                                   (ProposalReply/addDistributionType builder (p/distribution-type distribution)))
+                                 (if distribution
+                                   (ProposalReply/addDistribution builder distribution-packed))
                                  (ProposalReply/endProposalReply builder)))
 
   p/PMessageBodyType
@@ -24,20 +23,20 @@
 (extend-type ProposalReply
   p/PUnpack
   (unpack [this] (let [success (.success this)
-                       proposal-type (.proposalType this)
-                       proposal (condp = proposal-type
-                                  ProposalDistribution/CategoricalProposal
-                                  (p/unpack (cast CategoricalProposal (.proposal this (CategoricalProposal.))))
+                       distribution-type (.distributionType this)
+                       distribution (condp = distribution-type
+                                      Distribution/Categorical
+                                      (p/unpack (cast Categorical (.distribution this (Categorical.))))
 
-                                  ProposalDistribution/DiscreteProposal
-                                  (p/unpack (cast DiscreteProposal (.proposal this (DiscreteProposal.))))
+                                      Distribution/Discrete
+                                      (p/unpack (cast Discrete (.distribution this (Discrete.))))
 
-                                  ProposalDistribution/FlipProposal
-                                  (p/unpack (cast FlipProposal (.proposal this (FlipProposal.))))
+                                      Distribution/Flip
+                                      (p/unpack (cast Flip (.distribution this (Flip.))))
 
-                                  ProposalDistribution/NormalProposal
-                                  (p/unpack (cast NormalProposal (.proposal this (NormalProposal.))))
+                                      Distribution/Normal
+                                      (p/unpack (cast Normal (.distribution this (Normal.))))
 
-                                  ProposalDistribution/UniformDiscreteProposal
-                                  (p/unpack (cast UniformDiscreteProposal (.proposal this (UniformDiscreteProposal.)))))]
-                   (ProposalReplyClj. success proposal))))
+                                      Distribution/UniformDiscrete
+                                      (p/unpack (cast UniformDiscrete (.distribution this (UniformDiscrete.)))))]
+                   (ProposalReplyClj. success distribution))))

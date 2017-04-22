@@ -5,8 +5,8 @@
   (deep-equals [this other]))
 
 ;; Unions
-(defprotocol PProposalDistributionType
-  (proposal-distribution-type [this]))
+(defprotocol PDistributionType
+  (distribution-type [this]))
 
 (defprotocol PMessageBodyType
   (message-body-type [this]))

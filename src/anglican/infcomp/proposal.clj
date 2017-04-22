@@ -4,14 +4,14 @@
             [clojure.core.matrix :as m]
             [anglican.infcomp.dists :refer :all]
             [anglican.runtime :refer :all]
-            [anglican.infcomp.flatbuffers categorical-proposal
-             discrete-proposal flip-proposal normal-proposal
-             uniform-discrete-proposal])
-  (:import anglican.infcomp.flatbuffers.categorical_proposal.CategoricalProposalClj
-           anglican.infcomp.flatbuffers.discrete_proposal.DiscreteProposalClj
-           anglican.infcomp.flatbuffers.flip_proposal.FlipProposalClj
-           anglican.infcomp.flatbuffers.normal_proposal.NormalProposalClj
-           anglican.infcomp.flatbuffers.uniform_discrete_proposal.UniformDiscreteProposalClj))
+            [anglican.infcomp.flatbuffers categorical
+             discrete flip normal
+             uniform-discrete])
+  (:import anglican.infcomp.flatbuffers.categorical.CategoricalClj
+           anglican.infcomp.flatbuffers.discrete.DiscreteClj
+           anglican.infcomp.flatbuffers.flip.FlipClj
+           anglican.infcomp.flatbuffers.normal.NormalClj
+           anglican.infcomp.flatbuffers.uniform_discrete.UniformDiscreteClj))
 
 (defn get-proposal-constructor
   "Takes prior distribution and returns proposal distribution constructor."
@@ -23,22 +23,22 @@
     anglican.runtime.normal-distribution normal-proposal
     anglican.runtime.uniform-discrete-distribution uniform-discrete-proposal))
 
-(defn get-proposal
-  "Takes prior distribution object. Returns a flatbuffers compatible *ProposalClj object.
+(defn get-prior-distribution-clj
+  "Takes prior distribution object. Returns a flatbuffers compatible *Clj object.
 
   Input:
     prior-dist: prior distribution object defined by defdist
 
   Output: One of the following:
-    - CategoricalProposalClj
-    - DiscreteProposalClj
-    - FlipProposalClj
-    - NormalProposalClj
-    - UniformDiscreteProposalClj"
+    - CategoricalClj
+    - DiscreteClj
+    - FlipClj
+    - NormalClj
+    - UniformDiscreteClj"
   [prior-dist]
   (condp = (type prior-dist)
-    anglican.runtime.categorical-distribution (CategoricalProposalClj. (count (:categories prior-dist)) nil)
-    anglican.runtime.discrete-distribution (DiscreteProposalClj. (count (:weights prior-dist)) nil)
-    anglican.runtime.flip-distribution (FlipProposalClj. nil)
-    anglican.runtime.normal-distribution (NormalProposalClj. nil nil)
-    anglican.runtime.uniform-discrete-distribution (UniformDiscreteProposalClj. (:min prior-dist) (:max prior-dist) nil)))
+    anglican.runtime.categorical-distribution (CategoricalClj. (count (:categories prior-dist)) nil)
+    anglican.runtime.discrete-distribution (DiscreteClj. (count (:weights prior-dist)) nil)
+    anglican.runtime.flip-distribution (FlipClj. nil)
+    anglican.runtime.normal-distribution (NormalClj. (:mean prior-dist) (:sd prior-dist) nil nil)
+    anglican.runtime.uniform-discrete-distribution (UniformDiscreteClj. (:min prior-dist) (- (:max prior-dist) (:min prior-dist)) nil)))

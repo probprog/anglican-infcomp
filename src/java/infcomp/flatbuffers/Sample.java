@@ -18,8 +18,8 @@ public final class Sample extends Table {
   public String address() { int o = __offset(6); return o != 0 ? __string(o + bb_pos) : null; }
   public ByteBuffer addressAsByteBuffer() { return __vector_as_bytebuffer(6, 1); }
   public int instance() { int o = __offset(8); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
-  public byte proposalType() { int o = __offset(10); return o != 0 ? bb.get(o + bb_pos) : 0; }
-  public Table proposal(Table obj) { int o = __offset(12); return o != 0 ? __union(obj, o) : null; }
+  public byte distributionType() { int o = __offset(10); return o != 0 ? bb.get(o + bb_pos) : 0; }
+  public Table distribution(Table obj) { int o = __offset(12); return o != 0 ? __union(obj, o) : null; }
   public NDArray value() { return value(new NDArray()); }
   public NDArray value(NDArray obj) { int o = __offset(14); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
 
@@ -27,16 +27,16 @@ public final class Sample extends Table {
       int time,
       int addressOffset,
       int instance,
-      byte proposal_type,
-      int proposalOffset,
+      byte distribution_type,
+      int distributionOffset,
       int valueOffset) {
     builder.startObject(6);
     Sample.addValue(builder, valueOffset);
-    Sample.addProposal(builder, proposalOffset);
+    Sample.addDistribution(builder, distributionOffset);
     Sample.addInstance(builder, instance);
     Sample.addAddress(builder, addressOffset);
     Sample.addTime(builder, time);
-    Sample.addProposalType(builder, proposal_type);
+    Sample.addDistributionType(builder, distribution_type);
     return Sample.endSample(builder);
   }
 
@@ -44,8 +44,8 @@ public final class Sample extends Table {
   public static void addTime(FlatBufferBuilder builder, int time) { builder.addInt(0, time, 0); }
   public static void addAddress(FlatBufferBuilder builder, int addressOffset) { builder.addOffset(1, addressOffset, 0); }
   public static void addInstance(FlatBufferBuilder builder, int instance) { builder.addInt(2, instance, 0); }
-  public static void addProposalType(FlatBufferBuilder builder, byte proposalType) { builder.addByte(3, proposalType, 0); }
-  public static void addProposal(FlatBufferBuilder builder, int proposalOffset) { builder.addOffset(4, proposalOffset, 0); }
+  public static void addDistributionType(FlatBufferBuilder builder, byte distributionType) { builder.addByte(3, distributionType, 0); }
+  public static void addDistribution(FlatBufferBuilder builder, int distributionOffset) { builder.addOffset(4, distributionOffset, 0); }
   public static void addValue(FlatBufferBuilder builder, int valueOffset) { builder.addOffset(5, valueOffset, 0); }
   public static int endSample(FlatBufferBuilder builder) {
     int o = builder.endObject();
