@@ -11,10 +11,10 @@
                                    (Normal/addPriorMean builder prior-mean))
                                  (if prior-std
                                    (Normal/addPriorStd builder prior-std))
-                                   (if proposal-mean
-                                     (Normal/addProposalMean builder proposal-mean))
-                                   (if proposal-std
-                                     (Normal/addProposalStd builder proposal-std))
+                                 (if proposal-mean
+                                   (Normal/addProposalMean builder proposal-mean))
+                                 (if proposal-std
+                                   (Normal/addProposalStd builder proposal-std))
                                  (Normal/endNormal builder)))
 
   p/PDistributionType

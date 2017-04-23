@@ -69,13 +69,13 @@
                         (if (.success proposal-reply)
                           (let [proposal-distribution-clj (.distribution proposal-reply)
                                 proposal-params (condp = (type proposal-distribution-clj)
-                                                  CategoricalClj [(mapv vector (:values prior-dist) (.proposalProbabilities proposal-distribution-clj))]
-                                                  DiscreteClj [(.proposalProbabilities proposal-distribution-clj)]
-                                                  FlipClj [(.proposalProbability proposal-distribution-clj)]
-                                                  NormalClj [(.proposalMean proposal-distribution-clj) (.proposalStd proposal-distribution-clj)]
-                                                  UniformDiscreteClj [(.priorMin prior-distribution-clj)
-                                                                      (.priorSize prior-distribution-clj)
-                                                                      (from-NDArrayClj (.proposalProbabilities proposal-distribution-clj))])]
+                                                  CategoricalClj [(mapv vector (:values prior-dist) (from-NDArrayClj (.proposal-probabilities proposal-distribution-clj)))]
+                                                  DiscreteClj [(from-NDArrayClj (.proposal-probabilities proposal-distribution-clj))]
+                                                  FlipClj [(.proposal-probability proposal-distribution-clj)]
+                                                  NormalClj [(.proposal-mean proposal-distribution-clj) (.proposal-std proposal-distribution-clj)]
+                                                  UniformDiscreteClj [(.prior-min prior-distribution-clj)
+                                                                      (.prior-size prior-distribution-clj)
+                                                                      (from-NDArrayClj (.proposal-probabilities proposal-distribution-clj))])]
                             (apply (get-proposal-constructor prior-dist) proposal-params))
                           (do
                             (log/warn (str "Proposal parameters for " prior-dist " is not available: Using prior proposal instead."))
