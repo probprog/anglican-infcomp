@@ -52,6 +52,8 @@
         prev-sample-value (:value (last samples) -1)
         prev-sample-address (:sample-address (last samples) "")
         prev-sample-instance (:sample-instance (last samples) -1)
+        prev-prior-dist (:sample-prior-dist (last samples) nil)
+        prev-prior-distribution-clj (get-prior-distribution prev-prior-dist)
         _ (zmq/send socket (fbs/pack (MessageClj.
                                       (ProposalRequestClj.
                                        (SampleClj. nil
@@ -62,7 +64,7 @@
                                        (SampleClj. nil
                                                    prev-sample-address
                                                    prev-sample-instance
-                                                   nil
+                                                   prev-prior-distribution-clj
                                                    (to-NDArrayClj prev-sample-value))))))
         proposal-dist (let [proposal-reply (.body (fbs/unpack-message (zmq/receive socket)))]
                         (assert (instance? ProposalReplyClj proposal-reply))
@@ -88,6 +90,7 @@
                                  conj
                                  (array-map :sample-address sample-address
                                             :sample-instance sample-instance
+                                            :sample-prior-dist prior-dist
                                             :value (condp = (type prior-dist)
                                                      anglican.runtime.categorical-distribution (get (:index prior-dist) value)
                                                      anglican.runtime.flip-distribution (if value 1 0)
