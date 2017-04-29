@@ -53,7 +53,7 @@
         prev-sample-address (:sample-address (last samples) "")
         prev-sample-instance (:sample-instance (last samples) -1)
         prev-prior-dist (:sample-prior-dist (last samples) nil)
-        prev-prior-distribution-clj (get-prior-distribution prev-prior-dist)
+        prev-prior-distribution-clj (get-prior-distribution-clj prev-prior-dist)
         _ (zmq/send socket (fbs/pack (MessageClj.
                                       (ProposalRequestClj.
                                        (SampleClj. nil
