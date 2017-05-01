@@ -25,6 +25,9 @@
   (unpack [this] (let [success (.success this)
                        distribution-type (.distributionType this)
                        distribution (condp = distribution-type
+                                      Distribution/NONE
+                                      nil
+
                                       Distribution/Categorical
                                       (p/unpack (cast Categorical (.distribution this (Categorical.))))
 
