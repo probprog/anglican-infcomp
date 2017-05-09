@@ -5,12 +5,13 @@
             [anglican.infcomp.dists :refer :all]
             [anglican.runtime :refer :all]
             [anglican.infcomp.flatbuffers categorical
-             discrete flip normal
+             discrete flip normal uniform-continuous
              uniform-discrete])
   (:import anglican.infcomp.flatbuffers.categorical.CategoricalClj
            anglican.infcomp.flatbuffers.discrete.DiscreteClj
            anglican.infcomp.flatbuffers.flip.FlipClj
            anglican.infcomp.flatbuffers.normal.NormalClj
+           anglican.infcomp.flatbuffers.uniform_continuous.UniformContinuousClj
            anglican.infcomp.flatbuffers.uniform_discrete.UniformDiscreteClj))
 
 (defn get-proposal-constructor
@@ -21,6 +22,7 @@
     anglican.runtime.discrete-distribution discrete-proposal
     anglican.runtime.flip-distribution flip-proposal
     anglican.runtime.normal-distribution normal-proposal
+    anglican.runtime.uniform-continuous-distribution uniform-continuous-proposal
     anglican.runtime.uniform-discrete-distribution uniform-discrete-proposal))
 
 (defn get-prior-distribution-clj
@@ -41,4 +43,5 @@
     anglican.runtime.discrete-distribution (DiscreteClj. (count (:weights prior-dist)) nil)
     anglican.runtime.flip-distribution (FlipClj. nil)
     anglican.runtime.normal-distribution (NormalClj. (:mean prior-dist) (:sd prior-dist) nil nil)
+    anglican.runtime.uniform-continuous-distribution (UniformContinuousClj. (:min prior-dist) (:max prior-dist) nil nil)
     anglican.runtime.uniform-discrete-distribution (UniformDiscreteClj. (:min prior-dist) (- (:max prior-dist) (:min prior-dist)) nil)))
