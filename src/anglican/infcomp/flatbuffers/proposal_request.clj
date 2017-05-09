@@ -1,14 +1,14 @@
 (ns anglican.infcomp.flatbuffers.proposal-request
-  (:require [anglican.infcomp.flatbuffers.protocols :as p])
-  (:import [infcomp.flatbuffers MessageBody ProposalRequest]
+  (:require [anglican.infcomp.flatbuffers.core :as fbs])
+  (:import [infcomp.protocol MessageBody ProposalRequest]
            [java.nio ByteBuffer]))
 
 (deftype ProposalRequestClj [current-sample previous-sample]
-  p/PPackBuilder
+  fbs/PPackBuilder
   (pack-builder [this builder] (let [current-sample-packed (if current-sample
-                                                             (p/pack-builder current-sample builder))
+                                                             (fbs/pack-builder current-sample builder))
                                      previous-sample-packed (if previous-sample
-                                                             (p/pack-builder previous-sample builder))]
+                                                              (fbs/pack-builder previous-sample builder))]
                                  (ProposalRequest/startProposalRequest builder)
                                  (if current-sample
                                    (ProposalRequest/addCurrentSample builder current-sample-packed))
@@ -16,11 +16,11 @@
                                    (ProposalRequest/addPreviousSample builder previous-sample-packed))
                                  (ProposalRequest/endProposalRequest builder)))
 
-  p/PMessageBodyType
+  fbs/PMessageBodyType
   (message-body-type [this] MessageBody/ProposalRequest))
 
 (extend-type ProposalRequest
-  p/PUnpack
-  (unpack [this] (let [current-sample (p/unpack (.currentSample this))
-                       previous-sample (p/unpack (.previousSample this))]
+  fbs/PUnpack
+  (unpack [this] (let [current-sample (fbs/unpack (.currentSample this))
+                       previous-sample (fbs/unpack (.previousSample this))]
                    (ProposalRequestClj. current-sample previous-sample))))

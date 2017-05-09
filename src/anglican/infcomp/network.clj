@@ -2,7 +2,7 @@
   "Networking tools between Clojure and Torch."
   (:require [zeromq.zmq :as zmq]
             [clojure.core.matrix :refer [shape]]
-            [anglican.infcomp.flatbuffers.protocols :as fbs]
+            [anglican.infcomp.flatbuffers.core :as fbs]
             [anglican.infcomp.prior :refer [sample-from-prior]]
             [clojure.walk :refer [stringify-keys]]
             [anglican.infcomp.flatbuffers.ndarray :refer [to-NDArrayClj]]

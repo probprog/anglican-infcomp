@@ -1,20 +1,20 @@
 (ns anglican.infcomp.flatbuffers.flip
-  (:require [anglican.infcomp.flatbuffers.protocols :as p])
-  (:import [infcomp.flatbuffers Distribution Flip]
+  (:require [anglican.infcomp.flatbuffers.protocols :as fbs])
+  (:import [infcomp.protocol Distribution Flip]
            [java.nio ByteBuffer]))
 
 (deftype FlipClj [proposal-probability]
-  p/PPackBuilder
+  fbs/PPackBuilder
   (pack-builder [this builder] (do
                                  (Flip/startFlip builder)
                                  (if proposal-probability
                                    (Flip/addProposalProbability builder proposal-probability))
                                  (Flip/endFlip builder)))
 
-  p/PDistributionType
+  fbs/PDistributionType
   (distribution-type [this] Distribution/Flip))
 
 (extend-type Flip
-  p/PUnpack
+  fbs/PUnpack
   (unpack [this] (let [proposal-probability (.proposalProbability this)]
                    (FlipClj. proposal-probability))))

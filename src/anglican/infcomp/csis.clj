@@ -4,7 +4,7 @@
   (:require [clojure.string :as str]
             [clojure.core.matrix :as m]
             [zeromq.zmq :as zmq]
-            [anglican.infcomp.flatbuffers.protocols :as fbs]
+            [anglican.infcomp.flatbuffers.core :as fbs]
             [anglican.runtime :refer [sample* observe*]]
             [anglican.inference :refer [checkpoint infer exec]]
             [anglican.state :refer [add-log-weight]]

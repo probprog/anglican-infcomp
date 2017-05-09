@@ -1,4 +1,4 @@
-(ns anglican.infcomp.flatbuffers.protocols
+(ns anglican.infcomp.flatbuffers.core
   (:import [com.google.flatbuffers FlatBufferBuilder]))
 
 (defprotocol PDeepEquals

@@ -1,10 +1,10 @@
 (ns anglican.infcomp.flatbuffers.normal
-  (:require [anglican.infcomp.flatbuffers.protocols :as p])
-  (:import [infcomp.flatbuffers Distribution Normal]
+  (:require [anglican.infcomp.flatbuffers.core :as fbs])
+  (:import [infcomp.protocol Distribution Normal]
            [java.nio ByteBuffer]))
 
 (deftype NormalClj [prior-mean prior-std proposal-mean proposal-std]
-  p/PPackBuilder
+  fbs/PPackBuilder
   (pack-builder [this builder] (do
                                  (Normal/startNormal builder)
                                  (if prior-mean
@@ -17,11 +17,11 @@
                                    (Normal/addProposalStd builder proposal-std))
                                  (Normal/endNormal builder)))
 
-  p/PDistributionType
+  fbs/PDistributionType
   (distribution-type [this] Distribution/Normal))
 
 (extend-type Normal
-  p/PUnpack
+  fbs/PUnpack
   (unpack [this] (let [prior-mean (.priorMean this)
                        prior-std (.priorStd this)
                        proposal-mean (.proposalMean this)
