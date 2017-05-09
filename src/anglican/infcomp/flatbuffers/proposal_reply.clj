@@ -1,7 +1,7 @@
 (ns anglican.infcomp.flatbuffers.proposal-reply
   (:require [anglican.infcomp.flatbuffers.core :as fbs])
   (:import [infcomp.protocol MessageBody ProposalReply Distribution
-            Categorical Discrete Flip Normal UniformDiscrete]
+            Categorical Discrete Flip Normal UniformContinuous UniformDiscrete]
            [java.nio ByteBuffer]))
 
 (deftype ProposalReplyClj [success distribution]
@@ -39,6 +39,9 @@
 
                                       Distribution/Normal
                                       (fbs/unpack (cast Normal (.distribution this (Normal.))))
+
+                                      Distribution/UniformContinuous
+                                      (fbs/unpack (cast UniformContinuous (.distribution this (UniformContinuous.))))
 
                                       Distribution/UniformDiscrete
                                       (fbs/unpack (cast UniformDiscrete (.distribution this (UniformDiscrete.)))))]

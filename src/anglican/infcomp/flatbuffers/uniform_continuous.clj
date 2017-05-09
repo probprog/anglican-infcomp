@@ -23,7 +23,7 @@
 (extend-type UniformContinuous
   fbs/PUnpack
   (unpack [this] (let [prior-min (.priorMin this)
-                       prior-max (.priorSize this)
+                       prior-max (.priorMax this)
                        proposal-mode (.proposalMode this)
                        proposal-certainty (.proposalCertainty this)]
                    (UniformContinuousClj. prior-min prior-max proposal-mode proposal-certainty))))
