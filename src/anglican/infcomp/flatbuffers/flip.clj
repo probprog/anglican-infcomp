@@ -1,5 +1,5 @@
 (ns anglican.infcomp.flatbuffers.flip
-  (:require [anglican.infcomp.flatbuffers.protocols :as fbs])
+  (:require [anglican.infcomp.flatbuffers.core :as fbs])
   (:import [infcomp.protocol Distribution Flip]
            [java.nio ByteBuffer]))
 
