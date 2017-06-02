@@ -11,6 +11,7 @@ import com.google.flatbuffers.*;
 public final class Message extends Table {
   public static Message getRootAsMessage(ByteBuffer _bb) { return getRootAsMessage(_bb, new Message()); }
   public static Message getRootAsMessage(ByteBuffer _bb, Message obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
+  public static boolean MessageBufferHasIdentifier(ByteBuffer _bb) { return __has_identifier(_bb, "INFC"); }
   public void __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; }
   public Message __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
@@ -33,6 +34,6 @@ public final class Message extends Table {
     int o = builder.endObject();
     return o;
   }
-  public static void finishMessageBuffer(FlatBufferBuilder builder, int offset) { builder.finish(offset); }
+  public static void finishMessageBuffer(FlatBufferBuilder builder, int offset) { builder.finish(offset, "INFC"); }
 }
 

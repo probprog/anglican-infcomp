@@ -1,6 +1,6 @@
 (ns anglican.infcomp.dists
   "Proposal distributions used in Inference Compilation"
-  (:require [anglican.runtime :refer [observe* sample* defdist discrete beta categorical dirichlet flip log mvn normal]]
+  (:require [anglican.runtime :refer [observe* sample* defdist discrete beta categorical dirichlet flip log mvn normal laplace]]
             [anglican.rmh-dists :refer :all]
             [clojure.core.matrix :as m]))
 
@@ -113,6 +113,13 @@
   "Proposal distribution for normal"
   [mean std]
   [dist (normal mean std)]
+  (sample* [this] (sample* dist))
+  (observe* [this value] (observe* dist value)))
+
+(defdist laplace-proposal
+  "Proposal distribution for laplace"
+  [location scale]
+  [dist (laplace location scale)]
   (sample* [this] (sample* dist))
   (observe* [this value] (observe* dist value)))
 

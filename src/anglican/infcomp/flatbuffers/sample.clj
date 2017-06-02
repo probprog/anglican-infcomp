@@ -1,7 +1,7 @@
 (ns anglican.infcomp.flatbuffers.sample
   (:require [anglican.infcomp.flatbuffers.core :as fbs])
   (:import [infcomp.protocol Sample Distribution Categorical
-            Discrete Flip Normal UniformContinuous UniformDiscrete]
+            Discrete Flip Normal Laplace UniformContinuous UniformDiscrete]
            [java.nio ByteBuffer]))
 
 (deftype SampleClj [time address instance distribution value]
@@ -45,6 +45,9 @@
 
                                       Distribution/Normal
                                       (fbs/unpack (cast Normal (.distribution this (Normal.))))
+
+                                      Distribution/Laplace
+                                      (fbs/unpack (cast Laplace (.distribution this (Laplace.))))
 
                                       Distribution/UniformContinuous
                                       (fbs/unpack (cast UniformContinuous (.distribution this (UniformContinuous.))))

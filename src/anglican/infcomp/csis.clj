@@ -13,7 +13,7 @@
             [anglican.infcomp.flatbuffers.ndarray :refer [to-NDArrayClj from-NDArrayClj]]
             [anglican.infcomp.flatbuffers observes-init-request ndarray
              proposal-request sample categorical discrete
-             flip normal uniform-continuous uniform-discrete message
+             flip normal laplace uniform-continuous uniform-discrete message
              proposal-reply])
   (:import anglican.infcomp.flatbuffers.observes_init_request.ObservesInitRequestClj
            anglican.infcomp.flatbuffers.ndarray.NDArrayClj
@@ -23,6 +23,7 @@
            anglican.infcomp.flatbuffers.discrete.DiscreteClj
            anglican.infcomp.flatbuffers.flip.FlipClj
            anglican.infcomp.flatbuffers.normal.NormalClj
+           anglican.infcomp.flatbuffers.laplace.LaplaceClj
            anglican.infcomp.flatbuffers.uniform_continuous.UniformContinuousClj
            anglican.infcomp.flatbuffers.uniform_discrete.UniformDiscreteClj
            anglican.infcomp.flatbuffers.message.MessageClj
@@ -76,6 +77,7 @@
                                                   DiscreteClj [(from-NDArrayClj (.proposal-probabilities proposal-distribution-clj))]
                                                   FlipClj [(.proposal-probability proposal-distribution-clj)]
                                                   NormalClj [(.proposal-mean proposal-distribution-clj) (.proposal-std proposal-distribution-clj)]
+                                                  LaplaceClj [(.proposal-location proposal-distribution-clj) (.proposal-scale proposal-distribution-clj)]
                                                   UniformContinuousClj [(.prior-min prior-distribution-clj)
                                                                         (.prior-max prior-distribution-clj)
                                                                         (.proposal-mode proposal-distribution-clj)

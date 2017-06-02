@@ -14,8 +14,9 @@ public final class Distribution {
   public static final byte Poisson = 7;
   public static final byte UniformContinuous = 8;
   public static final byte MultivariateNormal = 9;
+  public static final byte Laplace = 10;
 
-  public static final String[] names = { "NONE", "Categorical", "Discrete", "Flip", "Normal", "UniformDiscrete", "VMF", "Poisson", "UniformContinuous", "MultivariateNormal", };
+  public static final String[] names = { "NONE", "Categorical", "Discrete", "Flip", "Normal", "UniformDiscrete", "VMF", "Poisson", "UniformContinuous", "MultivariateNormal", "Laplace", };
 
   public static String name(int e) { return names[e]; }
 }
