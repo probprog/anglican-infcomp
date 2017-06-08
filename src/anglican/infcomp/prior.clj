@@ -67,7 +67,8 @@
   [query query-args]
   (letfn [(sample-seq []
                       (lazy-seq
-                       (let [state (:state (exec ::algorithm query query-args {:samples [] :observes []}))
+                       (let [state (:state (exec ::algorithm query query-args (into anglican.state/initial-state
+                                                                                    {:samples [] :observes []})))
                              state-without-predicts-and-result (dissoc state :predicts :result)]
                          (cons state-without-predicts-and-result
                                (sample-seq)))))]
