@@ -1,7 +1,7 @@
 (ns anglican.infcomp.flatbuffers.sample
   (:require [anglican.infcomp.flatbuffers.core :as fbs])
-  (:import [infcomp.protocol Sample Distribution Categorical
-            Discrete Flip Normal Laplace UniformContinuous UniformDiscrete]
+  (:import [infcomp.protocol Sample Distribution Beta Categorical Discrete Flip
+            Gamma Laplace Normal UniformContinuous UniformDiscrete]
            [java.nio ByteBuffer]))
 
 (deftype SampleClj [time address instance distribution value]
@@ -34,6 +34,12 @@
                        instance (.instance this)
                        distribution-type (.distributionType this)
                        distribution (condp = distribution-type
+                                      Distribution/NONE
+                                      nil
+
+                                      Distribution/Beta
+                                      (fbs/unpack (cast Beta (.distribution this (Beta.))))
+
                                       Distribution/Categorical
                                       (fbs/unpack (cast Categorical (.distribution this (Categorical.))))
 
@@ -43,11 +49,14 @@
                                       Distribution/Flip
                                       (fbs/unpack (cast Flip (.distribution this (Flip.))))
 
-                                      Distribution/Normal
-                                      (fbs/unpack (cast Normal (.distribution this (Normal.))))
+                                      Distribution/Gamma
+                                      (fbs/unpack (cast Gamma (.distribution this (Gamma.))))
 
                                       Distribution/Laplace
                                       (fbs/unpack (cast Laplace (.distribution this (Laplace.))))
+
+                                      Distribution/Normal
+                                      (fbs/unpack (cast Normal (.distribution this (Normal.))))
 
                                       Distribution/UniformContinuous
                                       (fbs/unpack (cast UniformContinuous (.distribution this (UniformContinuous.))))

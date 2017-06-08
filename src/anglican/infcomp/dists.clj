@@ -1,6 +1,8 @@
 (ns anglican.infcomp.dists
   "Proposal distributions used in Inference Compilation"
-  (:require [anglican.runtime :refer [observe* sample* defdist discrete beta categorical dirichlet flip log mvn normal laplace]]
+  (:require [anglican.runtime :refer [observe* sample* defdist discrete beta
+                                      categorical dirichlet flip log mvn normal
+                                      laplace]]
             [anglican.rmh-dists :refer :all]
             [clojure.core.matrix :as m]))
 
@@ -97,8 +99,8 @@
 
 (defdist gamma-proposal
   "Proposal distribution for gamma"
-  [mean std]
-  [dist (folded-normal mean std)]
+  [location scale]
+  [dist (folded-normal location (Math/sqrt scale))]
   (sample* [this] (sample* dist))
   (observe* [this value] (observe* dist value)))
 

@@ -5,18 +5,20 @@ package infcomp.protocol;
 public final class Distribution {
   private Distribution() { }
   public static final byte NONE = 0;
-  public static final byte Categorical = 1;
-  public static final byte Discrete = 2;
-  public static final byte Flip = 3;
-  public static final byte Normal = 4;
-  public static final byte UniformDiscrete = 5;
-  public static final byte VMF = 6;
-  public static final byte Poisson = 7;
-  public static final byte UniformContinuous = 8;
-  public static final byte MultivariateNormal = 9;
-  public static final byte Laplace = 10;
+  public static final byte Beta = 1;
+  public static final byte Categorical = 2;
+  public static final byte Discrete = 3;
+  public static final byte Flip = 4;
+  public static final byte Gamma = 5;
+  public static final byte Laplace = 6;
+  public static final byte MultivariateNormal = 7;
+  public static final byte Normal = 8;
+  public static final byte Poisson = 9;
+  public static final byte UniformContinuous = 10;
+  public static final byte UniformDiscrete = 11;
+  public static final byte VMF = 12;
 
-  public static final String[] names = { "NONE", "Categorical", "Discrete", "Flip", "Normal", "UniformDiscrete", "VMF", "Poisson", "UniformContinuous", "MultivariateNormal", "Laplace", };
+  public static final String[] names = { "NONE", "Beta", "Categorical", "Discrete", "Flip", "Gamma", "Laplace", "MultivariateNormal", "Normal", "Poisson", "UniformContinuous", "UniformDiscrete", "VMF", };
 
   public static String name(int e) { return names[e]; }
 }

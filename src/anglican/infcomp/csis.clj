@@ -12,18 +12,20 @@
             [anglican.infcomp.proposal :refer [get-prior-distribution-clj get-proposal-constructor]]
             [anglican.infcomp.flatbuffers.ndarray :refer [to-NDArrayClj from-NDArrayClj]]
             [anglican.infcomp.flatbuffers observes-init-request ndarray
-             proposal-request sample categorical discrete
-             flip normal laplace uniform-continuous uniform-discrete message
+             proposal-request sample beta categorical discrete flip gamma
+             laplace normal uniform-continuous uniform-discrete message
              proposal-reply])
   (:import anglican.infcomp.flatbuffers.observes_init_request.ObservesInitRequestClj
            anglican.infcomp.flatbuffers.ndarray.NDArrayClj
            anglican.infcomp.flatbuffers.proposal_request.ProposalRequestClj
            anglican.infcomp.flatbuffers.sample.SampleClj
+           anglican.infcomp.flatbuffers.beta.BetaClj
            anglican.infcomp.flatbuffers.categorical.CategoricalClj
            anglican.infcomp.flatbuffers.discrete.DiscreteClj
            anglican.infcomp.flatbuffers.flip.FlipClj
-           anglican.infcomp.flatbuffers.normal.NormalClj
+           anglican.infcomp.flatbuffers.gamma.GammaClj
            anglican.infcomp.flatbuffers.laplace.LaplaceClj
+           anglican.infcomp.flatbuffers.normal.NormalClj
            anglican.infcomp.flatbuffers.uniform_continuous.UniformContinuousClj
            anglican.infcomp.flatbuffers.uniform_discrete.UniformDiscreteClj
            anglican.infcomp.flatbuffers.message.MessageClj
@@ -73,11 +75,14 @@
                         (if (.success proposal-reply)
                           (let [proposal-distribution-clj (.distribution proposal-reply)
                                 proposal-params (condp = (type proposal-distribution-clj)
+                                                  BetaClj [(.proposal-mode proposal-distribution-clj)
+                                                           (.proposal-certainty proposal-distribution-clj)]
                                                   CategoricalClj [(mapv vector (:values prior-dist) (from-NDArrayClj (.proposal-probabilities proposal-distribution-clj)))]
                                                   DiscreteClj [(from-NDArrayClj (.proposal-probabilities proposal-distribution-clj))]
                                                   FlipClj [(.proposal-probability proposal-distribution-clj)]
-                                                  NormalClj [(.proposal-mean proposal-distribution-clj) (.proposal-std proposal-distribution-clj)]
+                                                  GammaClj [(.proposal-location proposal-distribution-clj) (.proposal-scale proposal-distribution-clj)]
                                                   LaplaceClj [(.proposal-location proposal-distribution-clj) (.proposal-scale proposal-distribution-clj)]
+                                                  NormalClj [(.proposal-mean proposal-distribution-clj) (.proposal-std proposal-distribution-clj)]
                                                   UniformContinuousClj [(.prior-min prior-distribution-clj)
                                                                         (.prior-max prior-distribution-clj)
                                                                         (.proposal-mode proposal-distribution-clj)

@@ -26,7 +26,10 @@
                                  (array-map :time-index time-index
                                             :observe-address observe-address
                                             :observe-instance observe-instance
-                                            :value value))]
+                                            :value (condp = (type (:dist obs))
+                                                     anglican.runtime.categorical-distribution (get (:index (:dist obs)) value)
+                                                     anglican.runtime.flip-distribution (if value 1 0)
+                                                     value)))]
     #((:cont obs) value updated-state)))
 
 (defmethod checkpoint [::algorithm anglican.trap.sample] [_ smp]
