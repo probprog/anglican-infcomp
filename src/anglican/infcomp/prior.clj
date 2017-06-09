@@ -37,7 +37,7 @@
 
   Stores samples in state."
   (let [state (:state smp)
-        sample-address (:id smp)
+        sample-address (str (:id smp))
         sample-instance (count (filter #(= sample-address (:sample-address %))
                                        (:samples state)))
         prior-distribution-clj (get-prior-distribution-clj (:dist smp))
