@@ -5,7 +5,13 @@
             [clojure.core.matrix :as m]
             [anglican.inference :refer [checkpoint exec]]
             [anglican.runtime :refer [sample*]]
-            [anglican.infcomp.proposal :refer [get-prior-distribution-clj]]))
+            [anglican.infcomp.proposal :refer [get-prior-distribution-clj]]
+            [clojure.walk :as walk]
+            [anglican.infcomp.flatbuffers.ndarray :as ndarray]
+            [anglican.infcomp.flatbuffers traces-from-prior-reply trace sample])
+  (:import anglican.infcomp.flatbuffers.traces_from_prior_reply.TracesFromPriorReplyClj
+           anglican.infcomp.flatbuffers.trace.TraceClj
+           anglican.infcomp.flatbuffers.sample.SampleClj))
 
 (derive ::algorithm :anglican.inference/algorithm)
 
@@ -76,3 +82,47 @@
                          (cons state-without-predicts-and-result
                                (sample-seq)))))]
     (sample-seq)))
+
+(defn sample-observes-from-prior
+  "Returns a sample from the random variables defined via the observe
+  statements in query given the query arguments query-args."
+  [query query-args]
+  (:observes (first (sample-from-prior query query-args))))
+
+(defn sample-samples-from-prior
+  "Returns a sample from the random variables defined via the sample
+  statements in query given the query arguments query-args."
+  [query query-args]
+  (:samples (first (sample-from-prior query query-args))))
+
+(defn generate-traces-from-prior-reply
+  [query query-args combine-observes-fn combine-samples-fn num-traces]
+  (let [prior-samples (walk/stringify-keys
+                       (map (comp
+                             ;; Update observes via the combine-observes-fn
+                             (fn [smp]
+                               (update smp
+                                       :observes
+                                       combine-observes-fn))
+
+                             ;; Update samples via the combine-samples-fn
+                             (fn [smp]
+                               (update smp
+                                       :samples
+                                       combine-samples-fn)))
+                            (take num-traces
+                                  (sample-from-prior query query-args))))
+        traces-from-prior-reply (TracesFromPriorReplyClj.
+                                 (map (fn [trace]
+                                        (TraceClj.
+                                         (ndarray/to-NDArrayClj (get trace "observes"))
+                                         (map (fn [sample]
+                                                (SampleClj.
+                                                 (get sample "time-index")
+                                                 (get sample "sample-address")
+                                                 (get sample "sample-instance")
+                                                 (get sample "distribution")
+                                                 (ndarray/to-NDArrayClj (get sample "value"))))
+                                              (get trace "samples"))))
+                                      prior-samples))]
+    traces-from-prior-reply))
