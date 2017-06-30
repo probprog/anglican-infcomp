@@ -1,8 +1,8 @@
 (ns anglican.infcomp.flatbuffers.proposal-reply
   (:require [anglican.infcomp.flatbuffers.core :as fbs])
   (:import [infcomp.protocol MessageBody ProposalReply Distribution
-            Beta Categorical Discrete Flip Gamma Laplace Normal
-            UniformContinuous UniformDiscrete]
+            Beta Categorical Discrete Flip Gamma Laplace MultivariateNormal
+            Normal UniformContinuous UniformDiscrete]
            [java.nio ByteBuffer]))
 
 (deftype ProposalReplyClj [success distribution]
@@ -46,6 +46,9 @@
 
                                       Distribution/Laplace
                                       (fbs/unpack (cast Laplace (.distribution this (Laplace.))))
+
+                                      Distribution/MultivariateNormal
+                                      (fbs/unpack (cast MultivariateNormal (.distribution this (MultivariateNormal.))))
 
                                       Distribution/Normal
                                       (fbs/unpack (cast Normal (.distribution this (Normal.))))

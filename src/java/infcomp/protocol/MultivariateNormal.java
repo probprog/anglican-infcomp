@@ -16,31 +16,31 @@ public final class MultivariateNormal extends Table {
 
   public NDArray priorMean() { return priorMean(new NDArray()); }
   public NDArray priorMean(NDArray obj) { int o = __offset(4); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
-  public NDArray priorSigma() { return priorSigma(new NDArray()); }
-  public NDArray priorSigma(NDArray obj) { int o = __offset(6); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
+  public NDArray priorCov() { return priorCov(new NDArray()); }
+  public NDArray priorCov(NDArray obj) { int o = __offset(6); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
   public NDArray proposalMean() { return proposalMean(new NDArray()); }
   public NDArray proposalMean(NDArray obj) { int o = __offset(8); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
-  public NDArray proposalSigma() { return proposalSigma(new NDArray()); }
-  public NDArray proposalSigma(NDArray obj) { int o = __offset(10); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
+  public NDArray proposalVars() { return proposalVars(new NDArray()); }
+  public NDArray proposalVars(NDArray obj) { int o = __offset(10); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
 
   public static int createMultivariateNormal(FlatBufferBuilder builder,
       int prior_meanOffset,
-      int prior_sigmaOffset,
+      int prior_covOffset,
       int proposal_meanOffset,
-      int proposal_sigmaOffset) {
+      int proposal_varsOffset) {
     builder.startObject(4);
-    MultivariateNormal.addProposalSigma(builder, proposal_sigmaOffset);
+    MultivariateNormal.addProposalVars(builder, proposal_varsOffset);
     MultivariateNormal.addProposalMean(builder, proposal_meanOffset);
-    MultivariateNormal.addPriorSigma(builder, prior_sigmaOffset);
+    MultivariateNormal.addPriorCov(builder, prior_covOffset);
     MultivariateNormal.addPriorMean(builder, prior_meanOffset);
     return MultivariateNormal.endMultivariateNormal(builder);
   }
 
   public static void startMultivariateNormal(FlatBufferBuilder builder) { builder.startObject(4); }
   public static void addPriorMean(FlatBufferBuilder builder, int priorMeanOffset) { builder.addOffset(0, priorMeanOffset, 0); }
-  public static void addPriorSigma(FlatBufferBuilder builder, int priorSigmaOffset) { builder.addOffset(1, priorSigmaOffset, 0); }
+  public static void addPriorCov(FlatBufferBuilder builder, int priorCovOffset) { builder.addOffset(1, priorCovOffset, 0); }
   public static void addProposalMean(FlatBufferBuilder builder, int proposalMeanOffset) { builder.addOffset(2, proposalMeanOffset, 0); }
-  public static void addProposalSigma(FlatBufferBuilder builder, int proposalSigmaOffset) { builder.addOffset(3, proposalSigmaOffset, 0); }
+  public static void addProposalVars(FlatBufferBuilder builder, int proposalVarsOffset) { builder.addOffset(3, proposalVarsOffset, 0); }
   public static int endMultivariateNormal(FlatBufferBuilder builder) {
     int o = builder.endObject();
     return o;

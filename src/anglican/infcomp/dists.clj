@@ -106,8 +106,8 @@
 
 (defdist mvn-proposal
   "Proposal distribution for mvn"
-  [mean var]
-  [dist (mvn-mean-var mean var)]
+  [mean vars]
+  [dist (mvn-mean-vars mean vars)]
   (sample* [this] (sample* dist))
   (observe* [this value] (observe* dist value)))
 

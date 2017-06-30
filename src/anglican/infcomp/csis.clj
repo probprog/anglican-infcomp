@@ -5,6 +5,7 @@
             [clojure.core.matrix :as m]
             [zeromq.zmq :as zmq]
             [anglican.infcomp.flatbuffers.core :as fbs]
+            [anglican.infcomp.flatbuffers.ndarray :as ndarray]
             [anglican.runtime :refer [sample* observe*]]
             [anglican.inference :refer [checkpoint infer exec]]
             [anglican.state :refer [add-log-weight]]
@@ -13,8 +14,8 @@
             [anglican.infcomp.flatbuffers.ndarray :refer [to-NDArrayClj from-NDArrayClj]]
             [anglican.infcomp.flatbuffers observes-init-request ndarray
              proposal-request sample beta categorical discrete flip gamma
-             laplace normal uniform-continuous uniform-discrete message
-             proposal-reply])
+             laplace multivariate-normal normal uniform-continuous
+             uniform-discrete message proposal-reply])
   (:import anglican.infcomp.flatbuffers.observes_init_request.ObservesInitRequestClj
            anglican.infcomp.flatbuffers.ndarray.NDArrayClj
            anglican.infcomp.flatbuffers.proposal_request.ProposalRequestClj
@@ -25,6 +26,7 @@
            anglican.infcomp.flatbuffers.flip.FlipClj
            anglican.infcomp.flatbuffers.gamma.GammaClj
            anglican.infcomp.flatbuffers.laplace.LaplaceClj
+           anglican.infcomp.flatbuffers.multivariate_normal.MultivariateNormalClj
            anglican.infcomp.flatbuffers.normal.NormalClj
            anglican.infcomp.flatbuffers.uniform_continuous.UniformContinuousClj
            anglican.infcomp.flatbuffers.uniform_discrete.UniformDiscreteClj
@@ -82,6 +84,8 @@
                                                   FlipClj [(.proposal-probability proposal-distribution-clj)]
                                                   GammaClj [(.proposal-location proposal-distribution-clj) (.proposal-scale proposal-distribution-clj)]
                                                   LaplaceClj [(.proposal-location proposal-distribution-clj) (.proposal-scale proposal-distribution-clj)]
+                                                  MultivariateNormalClj [(ndarray/from-NDArrayClj (.proposal-mean proposal-distribution-clj))
+                                                                         (ndarray/from-NDArrayClj (.proposal-vars proposal-distribution-clj))]
                                                   NormalClj [(.proposal-mean proposal-distribution-clj) (.proposal-std proposal-distribution-clj)]
                                                   UniformContinuousClj [(.prior-min prior-distribution-clj)
                                                                         (.prior-max prior-distribution-clj)

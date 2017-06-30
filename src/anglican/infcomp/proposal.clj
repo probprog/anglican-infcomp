@@ -1,17 +1,19 @@
 (ns anglican.infcomp.proposal
   "Various functions used for Inference Compilation"
   (:require [clojure.string :as str]
-            [clojure.core.matrix :as m]
+            [anglican.infcomp.flatbuffers.ndarray :as ndarray]
             [anglican.infcomp.dists :refer :all]
             [anglican.runtime :refer :all]
             [anglican.infcomp.flatbuffers beta categorical discrete flip gamma
-             laplace normal uniform-continuous uniform-discrete])
+             laplace multivariate-normal normal uniform-continuous
+             uniform-discrete])
   (:import anglican.infcomp.flatbuffers.beta.BetaClj
            anglican.infcomp.flatbuffers.categorical.CategoricalClj
            anglican.infcomp.flatbuffers.discrete.DiscreteClj
            anglican.infcomp.flatbuffers.flip.FlipClj
            anglican.infcomp.flatbuffers.gamma.GammaClj
            anglican.infcomp.flatbuffers.laplace.LaplaceClj
+           anglican.infcomp.flatbuffers.multivariate_normal.MultivariateNormalClj
            anglican.infcomp.flatbuffers.normal.NormalClj
            anglican.infcomp.flatbuffers.uniform_continuous.UniformContinuousClj
            anglican.infcomp.flatbuffers.uniform_discrete.UniformDiscreteClj))
@@ -26,6 +28,7 @@
     anglican.runtime.flip-distribution flip-proposal
     anglican.runtime.gamma-distribution gamma-proposal
     anglican.runtime.laplace-distribution laplace-proposal
+    anglican.runtime.mvn-distribution mvn-proposal
     anglican.runtime.normal-distribution normal-proposal
     anglican.runtime.uniform-continuous-distribution uniform-continuous-proposal
     anglican.runtime.uniform-discrete-distribution uniform-discrete-proposal))
@@ -43,6 +46,7 @@
     - FlipClj
     - GammaClj
     - LaplaceClj
+    - MultivariateNormalClj
     - NormalClj
     - UniformDiscreteClj"
   [prior-dist]
@@ -53,6 +57,7 @@
     anglican.runtime.flip-distribution (FlipClj. nil)
     anglican.runtime.gamma-distribution (GammaClj. nil nil)
     anglican.runtime.laplace-distribution (LaplaceClj. (:location prior-dist) (:scale prior-dist) nil nil)
+    anglican.runtime.mvn-distribution (MultivariateNormalClj. (ndarray/to-NDArrayClj (:mean prior-dist)) (ndarray/to-NDArrayClj (:cov prior-dist)) nil nil)
     anglican.runtime.normal-distribution (NormalClj. (:mean prior-dist) (:sd prior-dist) nil nil)
     anglican.runtime.uniform-continuous-distribution (UniformContinuousClj. (:min prior-dist) (:max prior-dist) nil nil)
     anglican.runtime.uniform-discrete-distribution (UniformDiscreteClj. (:min prior-dist) (- (:max prior-dist) (:min prior-dist)) nil)))
