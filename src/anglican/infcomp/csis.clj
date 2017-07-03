@@ -38,7 +38,7 @@
 (def initial-state
   "initial state for Compiled SIS"
   (into anglican.state/initial-state
-        {::tcp-endpoint nil
+        {::endpoint nil
          ::context nil
          ::socket nil
          ::samples []}))
@@ -139,7 +139,7 @@
   (-> res
       (dissoc-in [:state ::context])
       (dissoc-in [:state ::socket])
-      (dissoc-in [:state ::tcp-endpoint])))
+      (dissoc-in [:state ::endpoint])))
 
 (defmethod infer :csis [_ prog value & {:keys [endpoint observe-embedder-input]
                                         :or {endpoint "tcp://localhost:6666"}}]
@@ -149,7 +149,7 @@
                         (:state (exec ::algorithm prog value (into initial-state
                                                                    (let [context (zmq/context 1)
                                                                          socket (doto (zmq/socket context :req)
-                                                                                  (zmq/connect tcp-endpoint))
+                                                                                  (zmq/connect endpoint))
                                                                          observe-embedder-input (or observe-embedder-input (first value))]
                                                                      (zmq/send socket (fbs/pack (MessageClj.
                                                                                                  (ObservesInitRequestClj.
@@ -157,6 +157,6 @@
                                                                      (zmq/receive socket)
                                                                      {::context context
                                                                       ::socket socket
-                                                                      ::tcp-endpoint tcp-endpoint}))))
+                                                                      ::endpoint endpoint}))))
                         (sample-seq))))]
     (sample-seq)))
