@@ -141,8 +141,8 @@
       (dissoc-in [:state ::socket])
       (dissoc-in [:state ::tcp-endpoint])))
 
-(defmethod infer :csis [_ prog value & {:keys [tcp-endpoint observe-embedder-input]
-                                        :or {tcp-endpoint "tcp://localhost:6666"}}]
+(defmethod infer :csis [_ prog value & {:keys [endpoint observe-embedder-input]
+                                        :or {endpoint "tcp://localhost:6666"}}]
   (letfn [(sample-seq []
                       (lazy-seq
                        (cons
