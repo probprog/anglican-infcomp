@@ -7,10 +7,7 @@
   (:import anglican.infcomp.flatbuffers.traces_from_prior_request.TracesFromPriorRequestClj
            anglican.infcomp.flatbuffers.message.MessageClj))
 
-(defn start-replier [query query-args combine-observes-fn &
-                     {:keys [endpoint combine-samples-fn]
-                      :or {endpoint "tcp://*:5555"
-                           combine-samples-fn identity}}]
+(defn start-replier
   "Starts ZMQ replier on a separate thread.
 
   input:
@@ -46,6 +43,10 @@
   output: a map, carrying information about this connection. The recommended
     workflow is to bind it to a variable and after finishing compilation, call
     stop-replier on the variable."
+  [query query-args combine-observes-fn &
+   {:keys [endpoint combine-samples-fn]
+    :or {endpoint "tcp://*:5555"
+         combine-samples-fn identity}}]
   (let [context (zmq/context 1)
         socket (zmq/bind (zmq/socket context :rep)
                          endpoint)
