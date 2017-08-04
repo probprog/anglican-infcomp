@@ -4,7 +4,7 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.8.0"]
-                 [anglican "1.0.1"]
+                 [anglican "1.1.0-SNAPSHOT"]
                  [org.zeromq/jeromq "0.3.3"]
                  [org.zeromq/cljzmq "0.1.4" :exclusions [org.zeromq/jzmq]] ; https://github.com/zeromq/cljzmq
                  [org.clojure/tools.logging "0.3.1"]
