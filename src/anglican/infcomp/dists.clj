@@ -29,9 +29,9 @@
     certainty is in (0, infinity) and determines the peakedness of the
       distribution."
   [min max mode certainty]
-  [normalised-mode (/ (- mode min) (- max min))
-   normalised-certainty (+ 2 certainty) ;(+ 2 (/ certainty (- max min))) which out of these two should it be? (we can decide for either)
-   dist (beta2 normalised-mode normalised-certainty)]
+  [normalized-mode (/ (- mode min) (- max min))
+   normalized-certainty (+ 2 certainty)
+   dist (beta2 normalized-mode normalized-certainty)]
   (sample* [this] (+ min (* (- max min) (sample* dist))))
   (observe* [this value] (- (observe* dist (/ (- value min) (- max min)))
                             (log (- max min)))))
