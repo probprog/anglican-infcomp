@@ -14,6 +14,14 @@ ENV PATH="/code/lein:${PATH}"
 ENV LEIN_ROOT="true"
 
 RUN lein
+
+RUN mkdir /code/gorilla-repl
+RUN cd /code/gorilla-repl && git clone -b develop https://github.com/JonyEpsilon/gorilla-repl.git
+RUN cd /code/gorilla-repl && lein install
+
+RUN echo "{:user {:plugins [[lein-gorilla \"0.4.1\"]]}}" > ~/.lein/profiles.clj
+RUN lein
+
 RUN cd /code && git clone -b development https://bitbucket.org/probprog/anglican.git
 RUN cd /code/anglican && lein install
 
