@@ -1,4 +1,4 @@
-(defproject anglican-infcomp "0.2.2-SNAPSHOT"
+(defproject anglican-infcomp "0.2.3-SNAPSHOT"
   :description "Inference Compilation Library for Anglican"
   :url "https://arxiv.org/abs/1610.09900"
   :license {:name "Eclipse Public License"

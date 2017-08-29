@@ -43,6 +43,10 @@
          ::socket nil
          ::samples []}))
 
+(defmethod checkpoint [::algorithm anglican.trap.observe] [_ obs]
+  #((:cont obs) (:value obs) (add-log-weight (:state obs)
+                                             (observe* (:dist obs) (:value obs)))))
+
 (defmethod checkpoint [::algorithm anglican.trap.sample] [_ smp]
   (let [state (:state smp)
         socket (::socket state)
