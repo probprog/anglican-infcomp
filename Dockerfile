@@ -4,7 +4,7 @@ RUN add-apt-repository ppa:openjdk-r/ppa
 RUN apt update
 RUN apt install -y openjdk-8-jdk
 
-RUN apt install -y wget vim
+RUN apt install -y wget vim man
 
 RUN mkdir /code/lein
 RUN wget https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein -P /code/lein/
@@ -23,8 +23,6 @@ RUN lein
 
 RUN cd /code && git clone -b development https://bitbucket.org/probprog/anglican.git
 RUN cd /code/anglican && lein install
-
-RUN cd /tmp && wget https://gist.githubusercontent.com/gbaydin/bdcd16e404a57c6f1e9e25c7b2884438/raw/543d7bc8067430211008fb0a03f8e2a5c47a28ea/ppaml-ss-examples-project.clj -O project.clj && lein deps
 
 ARG GIT_COMMIT="unknown"
 LABEL git_commit=$GIT_COMMIT
