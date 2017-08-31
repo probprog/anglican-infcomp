@@ -5,6 +5,7 @@ RUN apt update
 RUN apt install -y openjdk-8-jdk
 
 RUN apt install -y wget vim man
+RUN apt install -y fonts-noto ttf-ubuntu-font-family
 
 RUN mkdir /code/lein
 RUN wget https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein -P /code/lein/
