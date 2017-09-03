@@ -34,6 +34,8 @@ RUN mkdir /code/anglican-infcomp
 COPY . /code/anglican-infcomp
 RUN cd /code/anglican-infcomp && lein install
 
+RUN pip install jupyter
+
 WORKDIR /workspace
 RUN chmod -R a+w /workspace
 CMD bash
