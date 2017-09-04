@@ -36,6 +36,11 @@ RUN cd /code/anglican-infcomp && lein install
 
 RUN pip install jupyter
 
+RUN jupyter notebook --generate-config --allow-root
+RUN echo 'from notebook.auth.security import set_password \n\
+set_password("cscs")' > ~/jupyter-set-password.py
+RUN cd ~ && python jupyter-set-password.py
+
 WORKDIR /workspace
 RUN chmod -R a+w /workspace
 CMD bash
