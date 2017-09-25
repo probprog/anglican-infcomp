@@ -1,4 +1,4 @@
-FROM gbaydin/pyprob
+FROM gbaydin/pyprob-mini
 
 RUN add-apt-repository ppa:openjdk-r/ppa
 RUN apt update
