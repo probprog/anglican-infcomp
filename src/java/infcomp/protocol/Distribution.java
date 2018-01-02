@@ -15,10 +15,11 @@ public final class Distribution {
   public static final byte Normal = 8;
   public static final byte Poisson = 9;
   public static final byte UniformContinuous = 10;
-  public static final byte UniformDiscrete = 11;
-  public static final byte VMF = 12;
+  public static final byte UniformContinuousAlt = 11;
+  public static final byte UniformDiscrete = 12;
+  public static final byte VMF = 13;
 
-  public static final String[] names = { "NONE", "Beta", "Categorical", "Discrete", "Flip", "Gamma", "Laplace", "MultivariateNormal", "Normal", "Poisson", "UniformContinuous", "UniformDiscrete", "VMF", };
+  public static final String[] names = { "NONE", "Beta", "Categorical", "Discrete", "Flip", "Gamma", "Laplace", "MultivariateNormal", "Normal", "Poisson", "UniformContinuous", "UniformContinuousAlt", "UniformDiscrete", "VMF", };
 
   public static String name(int e) { return names[e]; }
 }
